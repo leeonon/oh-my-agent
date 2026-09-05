@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "svelte": {
+      "command": "npx",
+      "args": ["-y", "@sveltejs/mcp"]
+    },
+    "codegraph": {
+      "type": "stdio",
+      "command": "codegraph",
+      "directTools": false,
+      "args": ["serve", "--mcp"]
+    },
+    "paper": {
+      "type": "remote",
+      "url": "http://127.0.0.1:29979/mcp",
+      "enabled": true
+    }
+  },
+  "imports": ["claude-code", "claude-desktop"]
+}

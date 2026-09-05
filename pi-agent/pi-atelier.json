@@ -1,0 +1,61 @@
+{
+  "preset": "custom",
+  "shortcut": "alt+a",
+  "segments": [
+    "brand",
+    "activity",
+    "metrics",
+    "context",
+    "model",
+    "git",
+    "statuses",
+    "menu"
+  ],
+  "density": "comfortable",
+  "ornament": "none",
+  "contextWarning": 70,
+  "contextDanger": 90,
+  "currencyDecimals": 3,
+  "showExtensionStatuses": true,
+  "showSessionActions": true,
+  "showSidebarToolNames": true,
+  "completionNotifications": false,
+  "segmentLayout": [
+    {
+      "id": "brand",
+      "visible": false
+    },
+    {
+      "id": "activity",
+      "visible": true
+    },
+    {
+      "id": "metrics",
+      "visible": true
+    },
+    {
+      "id": "performance",
+      "visible": false
+    },
+    {
+      "id": "context",
+      "visible": true
+    },
+    {
+      "id": "model",
+      "visible": true
+    },
+    {
+      "id": "git",
+      "visible": true
+    },
+    {
+      "id": "statuses",
+      "visible": false
+    },
+    {
+      "id": "menu",
+      "visible": true
+    }
+  ]
+}

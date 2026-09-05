@@ -1,0 +1,11 @@
+{
+  "name": "pi-agent-config",
+  "private": true,
+  "description": "Type dependencies for ~/.pi/agent/extensions (IDE type-checking only; runtime resolution is provided by pi itself)",
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.84.4",
+    "@earendil-works/pi-ai": "^0.84.4",
+    "@earendil-works/pi-tui": "^0.84.4",
+    "typescript": "^5.5.4"
+  }
+}

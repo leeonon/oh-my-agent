@@ -1,0 +1,60 @@
+{
+  "lastChangelogVersion": "0.85.0",
+  "ui": {
+    "tuiMode": "fullscreen"
+  },
+  "packages": [
+    "npm:pi-provider-kimi-code",
+    "npm:pi-btw",
+    "npm:pi-goal",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-mcp-adapter",
+    "npm:pi-thinking-steps",
+    "npm:@tintinweb/pi-subagents",
+    "npm:@juicesharp/rpiv-web-tools",
+    "npm:@juicesharp/rpiv-args",
+    "npm:pi-tool-display",
+    "npm:@plannotator/pi-extension",
+    "npm:@ayulab/pi-undoredo",
+    "npm:context-mode",
+    "npm:pi-simplify",
+    "npm:pi-markdown-preview",
+    "npm:pi-opencode-bridge",
+    "npm:@ff-labs/pi-fff",
+    "git:github.com/earendil-works/pi-review-loop",
+    {
+      "source": "npm:pi-atelier",
+      "autoload": false
+    },
+    "npm:pi-intercom",
+    "npm:pi-context-usage",
+    "npm:@pi-lab/input-history",
+    "npm:pi-skillful",
+    "npm:@pi-stef/figma"
+  ],
+  "extensions": [
+    "./extensions/danger_guard/index.ts",
+    "./extensions/context/index.ts",
+    "./extensions/rename/index.ts",
+    "./extensions/welcome-screen/src/index.ts"
+  ],
+  "skills": [
+    "./skills",
+    "~/.agents/skills/"
+  ],
+  "prompts": [
+    "./prompts"
+  ],
+  "themes": [
+    "./themes"
+  ],
+  "defaultProvider": "zai-coding-cn",
+  "defaultModel": "glm-5.3",
+  "defaultThinkingLevel": "high",
+  "powerline": {
+    "preset": "default",
+    "fixedEditor": false
+  },
+  "theme": "catppuccin-mocha",
+  "hideThinkingBlock": false
+}
