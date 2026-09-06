@@ -40,6 +40,7 @@
 | `prototype`                | 用一次性原型验证状态模型或界面手感                        | Matt Pocock             | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/prototype)                |
 | `research`                 | 对着一手资料做调研，结果写成仓库里的 Markdown             | Matt Pocock             | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/research)                 |
 | `setup-matt-pocock-skills` | 一次性配好 issue tracker、triage 标签和领域文档布局       | Matt Pocock             | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/setup-matt-pocock-skills) |
+| `show-me`                  | 用简洁图示、代码结构草图和针对性 HTML 产物，帮人把当前话题看明白 | humanlayer              | [humanlayer/skills](https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md)     |
 | `tdd`                      | 测试先行：红绿重构，或补集成测试                          | Matt Pocock             | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd)                      |
 | `teach-impeccable`         | 一次性收集项目设计上下文，写进 AI 配置                    | Paul Bakaus             | [pbakaus/impeccable](https://github.com/pbakaus/impeccable)                                                     |
 | `terminal-browser`         | 终端里跑一个真浏览器，可分屏、截图、点击、填表            | zenbu-labs              | [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser)                                   |
