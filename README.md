@@ -88,3 +88,9 @@ Public snapshot of the local `~/.pi/agent` config.
 | name | desc | Source |
 | --- | --- | --- |
 | `ego-browser` | Chromium browser for humans and agents; prefer it for browsing, forms, screenshots, and QA | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite/blob/main/skills/ego-browser/SKILL.md) |
+
+### tt-a1i
+
+| name | desc | Source |
+| --- | --- | --- |
+| `archify` | Create polished architecture, workflow, sequence, and data-flow diagrams as explorable HTML | [tt-a1i/archify](https://github.com/tt-a1i/archify) |

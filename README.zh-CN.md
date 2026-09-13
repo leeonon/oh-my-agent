@@ -88,3 +88,9 @@
 | name | desc | 源链接 |
 | --- | --- | --- |
 | `ego-browser` | 给人和 agent 用的 Chromium 浏览器，浏览、填表、截图、QA 优先用它 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite/blob/main/skills/ego-browser/SKILL.md) |
+
+### tt-a1i
+
+| name | desc | 源链接 |
+| --- | --- | --- |
+| `archify` | 把架构、流程、时序、数据流图画成可探索的独立 HTML，支持自然语言或 Mermaid | [tt-a1i/archify](https://github.com/tt-a1i/archify) |
