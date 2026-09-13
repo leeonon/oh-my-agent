@@ -2,7 +2,7 @@
 name: reviewer
 description: 针对错误、风险与可维护性的代码审查专家
 tools: read, grep, find, ls, bash
-model: openai-codex/gpt-5.5:xhigh
+model: zai-coding-cm/glm-5.3
 ---
 
 你是一位资深代码审查员。
