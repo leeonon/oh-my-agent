@@ -26,6 +26,16 @@ DIRS=(
   agents
 )
 
+# Filenames skipped inside extensions/.
+EXTENSION_EXCLUDE=(
+  codeisland.ts
+  orca-agent-status.ts
+  orca-prefill.ts
+  orca-titlebar-spinner.ts
+  otty-integration.ts
+  skillful-install.json
+)
+
 usage() {
   cat <<EOF
 Usage: $(basename "$0") [--dry-run]
@@ -38,6 +48,8 @@ into:
 Allowlist:
   files: ${FILES[*]}
   dirs:  ${DIRS[*]}
+extensions exclude:
+  ${EXTENSION_EXCLUDE[*]}
 EOF
 }
 
@@ -104,10 +116,27 @@ for name in "${DIRS[@]}"; do
     continue
   fi
   mkdir -p "$DEST/$name"
-  "${RSYNC[@]}" --delete "$SRC/$name/" "$DEST/$name/"
+  extra=()
+  if [[ "$name" == "extensions" ]]; then
+    for skip in "${EXTENSION_EXCLUDE[@]}"; do
+      extra+=(--exclude "$skip")
+    done
+  fi
+  "${RSYNC[@]}" --delete "${extra[@]}" "$SRC/$name/" "$DEST/$name/"
   echo "dir:  $name/"
   copied=$((copied + 1))
 done
+
+if [[ -d "$DEST/extensions" ]]; then
+  for skip in "${EXTENSION_EXCLUDE[@]}"; do
+    if [[ -e "$DEST/extensions/$skip" ]]; then
+      echo "remove (excluded): extensions/$skip"
+      if [[ "$DRY_RUN" -eq 0 ]]; then
+        rm -f "$DEST/extensions/$skip"
+      fi
+    fi
+  done
+fi
 
 shopt -s dotglob nullglob
 for path in "$DEST"/*; do

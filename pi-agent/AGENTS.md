@@ -47,3 +47,4 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 
 **Principle:** Prefer `send` for notifications; `ask` only when blocked waiting for input.
 </pi-intercom>
+
