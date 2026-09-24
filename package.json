@@ -1,16 +1,14 @@
 {
   "name": "oh-my-agent",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.15.1",
   "scripts": {
     "sync-pi": "./scripts/sync-pi-config.sh",
     "sync-pi:dry-run": "./scripts/sync-pi-config.sh --dry-run"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^7"
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
   }
 }
