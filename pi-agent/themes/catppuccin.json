@@ -33,7 +33,7 @@
     "accent": "mauve",
     "border": "surface1",
     "borderAccent": "lavender",
-    "borderMuted": "surface0",
+    "borderMuted": "mauve",
     "success": "green",
     "error": "red",
     "warning": "yellow",
