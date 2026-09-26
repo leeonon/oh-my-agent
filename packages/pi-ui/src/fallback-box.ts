@@ -24,8 +24,10 @@ interface FallbackBoxState {
   startedAt?: number;
   elapsedMs?: number;
   resultSeen?: boolean;
-  firstPartialSeen?: boolean;
   statsLabel?: string;
+  /** Grow-only running-frame height: TuiAltScreen leaks rows on shrink,
+   *  so a running card must never get shorter until the result settles it. */
+  runningMaxRows?: number;
 }
 
 const PARTIAL_BODY_LIMIT = 8;
@@ -52,6 +54,13 @@ function freezeElapsed(state: FallbackBoxState): number | undefined {
 
 function formatElapsed(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
+}
+
+/** Whole-second label for RUNNING cards: the frame loop repaints the whole
+ *  tree ~12x/s, and a centisecond label changes every frame, forcing
+ *  TuiAltScreen's diff to rewrite (and leak) rows continuously. */
+function formatRunningElapsed(ms: number): string {
+  return `${Math.floor(ms / 1000)}s`;
 }
 
 function formatValue(value: unknown): string {
@@ -122,7 +131,7 @@ function buildFallbackRows(
       const elapsed = liveElapsedMs(state);
       const runningLabel = theme.fg(
         "dim",
-        elapsed === undefined ? "Running" : `Running · ${formatElapsed(elapsed)}`,
+        elapsed === undefined ? "Running" : `Running · ${formatRunningElapsed(elapsed)}`,
       );
       const stats = state.statsLabel ?? (running ? runningLabel : undefined);
       const frame = boxStatsBorders(
@@ -138,7 +147,11 @@ function buildFallbackRows(
       if (!running) {
         return [frame.top, ...pad, ...body, ...pad];
       }
-      return [frame.top, ...pad, ...body, ...pad, frame.bottom];
+      const rows = [frame.top, ...pad, ...body, ...pad, frame.bottom];
+      const maxRows = Math.max(state.runningMaxRows ?? 0, rows.length);
+      state.runningMaxRows = maxRows;
+      while (rows.length < maxRows) rows.push(boxLine(theme, "", w));
+      return rows;
   })();
 }
 
@@ -151,9 +164,10 @@ export function renderFallbackBoxResult(
     const raw = textContent(result).trimEnd();
 
     if (options.isPartial) {
-      const first = !state.firstPartialSeen;
-      state.firstPartialSeen = true;
-      if (first) return EMPTY_RESULT;
+      // Empty partials must render zero rows CONSISTENTLY: alternating
+      // 0↔1 rows makes the card height oscillate, which TuiAltScreen turns
+      // into stacked ghost copies (shrink leaks rows, grow repains lower).
+      if (raw.trim() === "") return EMPTY_RESULT;
       return {
         invalidate() {},
         render(width: number): string[] {

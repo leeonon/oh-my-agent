@@ -74,6 +74,12 @@ function formatElapsed(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
+/** Whole-second RUNNING label keeps frames byte-identical between ticks
+ *  (centisecond labels force a diff rewrite every animation frame). */
+function formatRunningElapsed(ms: number): string {
+  return `${Math.floor(ms / 1000)}s`;
+}
+
 export function countDiffStats(diff: string): { additions: number; removals: number } {
   let additions = 0;
   let removals = 0;
@@ -152,7 +158,7 @@ function buildMutationRows(
       const elapsed = liveElapsedMs(state);
       const runningLabel = theme.fg(
         "dim",
-        elapsed === undefined ? "Running" : `Running · ${formatElapsed(elapsed)}`,
+        elapsed === undefined ? "Running" : `Running · ${formatRunningElapsed(elapsed)}`,
       );
       const stats = state.statsLabel ?? (running ? runningLabel : undefined);
       const frame = boxStatsBorders(

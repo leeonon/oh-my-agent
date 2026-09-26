@@ -32,6 +32,7 @@ type ToolHost = {
   getRenderShell?: () => string;
   getCallRenderer: () => RenderCall | undefined;
   getResultRenderer: () => RenderResult | undefined;
+  hasRendererDefinition: () => boolean;
 };
 
 function isOurs(fn: unknown): boolean {
@@ -59,11 +60,23 @@ function neutralizeBackground(host: ToolHost): void {
   container.setBgFn?.((text) => text);
 }
 
+function isUnknownTool(toolName: string): boolean {
+  return !isReservedAgentTool(toolName) && !OWNED_TOOLS.has(toolName);
+}
+
 export function installUnknownToolDecoration(): void {
   const proto = ToolExecutionComponent.prototype as unknown as ToolHost;
   const originalGetCall = unwrap(proto.getCallRenderer) as ToolHost["getCallRenderer"];
   const originalGetResult = unwrap(proto.getResultRenderer) as ToolHost["getResultRenderer"];
   const originalGetShell = unwrap(proto.getRenderShell) as ToolHost["getRenderShell"];
+  const originalHasDefinition = unwrap(proto.hasRendererDefinition) as ToolHost["hasRendererDefinition"];
+
+  // Definition-less extension tools would otherwise fall into Pi's generic
+  // contentText path, which bypasses every renderer hook. Claim them too.
+  proto.hasRendererDefinition = mark(function (this: ToolHost) {
+    if (isUnknownTool(this.toolName)) return true;
+    return originalHasDefinition.call(this);
+  }, originalHasDefinition);
 
   proto.getCallRenderer = mark(function (this: ToolHost) {
     if (this.toolName === "grep" || this.toolName === "read") neutralizeBackground(this);
@@ -76,7 +89,7 @@ export function installUnknownToolDecoration(): void {
         }
       };
     }
-    if (isReservedAgentTool(this.toolName) || OWNED_TOOLS.has(this.toolName)) {
+    if (!isUnknownTool(this.toolName)) {
       return originalGetCall.call(this);
     }
     neutralizeBackground(this);
@@ -89,7 +102,7 @@ export function installUnknownToolDecoration(): void {
   proto.getResultRenderer = mark(function (this: ToolHost) {
     if (this.toolName === "grep" || this.toolName === "read") neutralizeBackground(this);
     if (this.toolName === "read") return readResult as RenderResult;
-    if (isReservedAgentTool(this.toolName) || OWNED_TOOLS.has(this.toolName)) {
+    if (!isUnknownTool(this.toolName)) {
       return originalGetResult.call(this);
     }
     neutralizeBackground(this);
@@ -98,7 +111,7 @@ export function installUnknownToolDecoration(): void {
 
   proto.getRenderShell = mark(function (this: ToolHost) {
     if (this.toolName === "grep" || this.toolName === "read") return "self";
-    if (isReservedAgentTool(this.toolName) || OWNED_TOOLS.has(this.toolName)) {
+    if (!isUnknownTool(this.toolName)) {
       return originalGetShell?.call(this) ?? "default";
     }
     return "self";

@@ -142,6 +142,12 @@ function formatElapsed(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
+/** Whole-second RUNNING label keeps frames byte-identical between ticks
+ *  (centisecond labels force a diff rewrite every animation frame). */
+function formatRunningElapsed(ms: number): string {
+  return `${Math.floor(ms / 1000)}s`;
+}
+
 function footerText(
   theme: Theme,
   status: BashTerminalStatus | undefined,
@@ -239,7 +245,7 @@ function buildBashCallRows(
       const elapsed = liveElapsedMs(state);
       const runningLabel = theme.fg(
         "dim",
-        elapsed === undefined ? "Running" : `Running · ${formatElapsed(elapsed)}`,
+        elapsed === undefined ? "Running" : `Running · ${formatRunningElapsed(elapsed)}`,
       );
       const stats = state.statsLabel ?? (running ? runningLabel : undefined);
       const frame = boxStatsBorders(theme, w, title, stats, getConfig().statsPlacement);
