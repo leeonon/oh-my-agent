@@ -65,6 +65,40 @@ const TOOL_META: Record<string, { title: string; token: string }> = {
   find: { title: "Find", token: "accent" },
 };
 
+/** Semantic single-glyph anchors (pi-tool-call-markers style): the glyph
+ *  identifies the module without reading the tool name. Unmapped → `*`. */
+const TOOL_ANCHORS: Record<string, string> = {
+  bash: "$",
+  read: "●",
+  write: "+",
+  edit: "±",
+  grep: "○",
+  ls: "≡",
+  find: "○",
+};
+
+/** Keep the TAIL of the first line: for commands and paths the useful part
+ *  (subcommand, file name) lives at the end. */
+function keepTail(text: string, max: number): string {
+  const line = (text.split("\n", 1)[0] ?? "").trim();
+  return line.length > max ? `…${line.slice(-max)}` : line;
+}
+
+/** Short result tail after `→`: first line of the result text. */
+function resultTail(result: unknown, max = 24): string | undefined {
+  const content = (result as { content?: Array<{ type?: string; text?: string }> } | undefined)
+    ?.content;
+  const text = Array.isArray(content)
+    ? content
+        .filter((block) => block?.type === "text" && typeof block.text === "string")
+        .map((block) => block.text ?? "")
+        .join(" ")
+        .trim()
+    : "";
+  if (!text) return undefined;
+  return keepTail(text, max);
+}
+
 function minimalToolLine(
   tool: Record<string, unknown>,
   theme: Theme | undefined,
@@ -78,19 +112,38 @@ function minimalToolLine(
       return text;
     }
   };
+  const dim = (t: Theme | undefined, text: string) => fg("dim", text);
   const rawName = String(tool.toolName ?? "?");
+  const result = tool.result as
+    | { isError?: boolean; content?: Array<{ type?: string; text?: string }> }
+    | undefined;
+  const running = result === undefined || result === null;
+  const isError = Boolean(result?.isError);
+  const args = (tool.args ?? {}) as Record<string, unknown>;
+  const summary = summarizeArgs(args);
+  const tail = running ? undefined : resultTail(result);
+  // Align with assistant text: both carry the same outputPad indent.
+  const pad = " ".repeat(Math.max(0, Math.floor(Number(tool.outputPad ?? 1)) || 0));
+
+  if ((getConfig().minimalStyle ?? "anchor") === "anchor") {
+    // `│ $ npm test → done` — rail + semantic glyph, low-contrast states.
+    const anchor = TOOL_ANCHORS[rawName] ?? "*";
+    const stateToken = isError ? "error" : running ? "warning" : "dim";
+    const rail = dim(theme, "│");
+    const line = `${rail} ${fg(stateToken, `${anchor} ${summary}`)}`;
+    const tailPart = tail ? ` ${fg(isError ? "error" : "dim", `→ ${tail}`)}` : "";
+    return fitLine(`${pad}${line}${tailPart}`, Math.max(1, width));
+  }
+
+  // name style: `➔ Bash ✓ npm test — done`
   const meta = TOOL_META[rawName];
   const toolName = meta?.title ?? (isMcpToolName(rawName) ? formatMcpToolName(rawName) : rawName);
   const custom = getConfig().colors?.tools ?? {};
   const nameToken = custom[rawName] ?? custom["*"] ?? meta?.token ?? "muted";
-  const result = tool.result as { isError?: boolean } | undefined;
-  const mark = result === undefined || result === null ? "⟳" : result.isError ? "✘" : "✓";
-  const markToken = result?.isError ? "error" : result ? "success" : "muted";
-  const args = (tool.args ?? {}) as Record<string, unknown>;
-  const summary = summarizeArgs(args);
-  const line = `${fg(nameToken, `➔ ${toolName}`)} ${fg(markToken, mark)}${summary ? ` ${fg("dim", summary)}` : ""}`;
-  // Align with assistant text: both carry the same outputPad indent.
-  const pad = " ".repeat(Math.max(0, Math.floor(Number(tool.outputPad ?? 1)) || 0));
+  const mark = running ? "⟳" : isError ? "✘" : "✓";
+  const markToken = isError ? "error" : running ? "muted" : "success";
+  const tailPart = tail ? ` ${dim(theme, `— ${tail}`)}` : "";
+  const line = `${fg(nameToken, `➔ ${toolName}`)} ${fg(markToken, mark)}${summary ? ` ${fg("dim", summary)}` : ""}${tailPart}`;
   return fitLine(pad + line, Math.max(1, width));
 }
 

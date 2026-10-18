@@ -16,9 +16,14 @@ export interface PiUiColors {
   tools?: Record<string, string>;
 }
 
+export type MinimalStyle = "anchor" | "name";
+
 export interface PiUiConfig {
   /** Rendering density preset: applies a bundle of per-item budgets. */
   density: Density;
+  /** Minimal-density single-line style: `│ ● npm test` (anchor) or
+   *  `➔ Bash ✓ npm test` (name). */
+  minimalStyle: MinimalStyle;
   /** Custom colours for thinking / tool names (theme tokens). */
   colors?: PiUiColors;
   /** Collapsed tool result body lines. 0 = hide output until expand. */
@@ -66,9 +71,11 @@ export const DENSITY_PRESETS: Record<Density, Partial<Omit<PiUiConfig, "density"
 };
 
 const DENSITIES = new Set<Density>(["minimal", "default", "detailed"]);
+const MINIMAL_STYLES = new Set<MinimalStyle>(["anchor", "name"]);
 
 const DEFAULT_CONFIG: PiUiConfig = {
   density: "default",
+  minimalStyle: "anchor",
   collapsedResultLines: 0,
   statsPlacement: "bottom-left",
   boxPadding: 0,
@@ -121,6 +128,7 @@ export function loadConfig(): void {
     if (typeof raw !== "object" || raw === null) return;
     const record = raw as {
       density?: unknown;
+      minimalStyle?: unknown;
       colors?: unknown;
       collapsedResultLines?: unknown;
       statsPlacement?: unknown;
@@ -133,6 +141,9 @@ export function loadConfig(): void {
     const next: PiUiConfig = { ...DEFAULT_CONFIG };
     if (typeof record.density === "string" && DENSITIES.has(record.density as Density)) {
       next.density = record.density as Density;
+    }
+    if (typeof record.minimalStyle === "string" && MINIMAL_STYLES.has(record.minimalStyle as MinimalStyle)) {
+      next.minimalStyle = record.minimalStyle as MinimalStyle;
     }
     const colors = record.colors as Record<string, unknown> | undefined;
     if (colors && typeof colors === "object") {
@@ -176,6 +187,11 @@ export function loadConfig(): void {
   } catch {
     store().current = { ...DEFAULT_CONFIG };
   }
+}
+
+export function setMinimalStyle(style: MinimalStyle): void {
+  store().current = { ...getConfig(), minimalStyle: style };
+  persist();
 }
 
 export function applyDensity(density: Density): void {

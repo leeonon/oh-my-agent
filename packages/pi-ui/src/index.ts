@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
   applyDensity,
   getConfig,
+  setMinimalStyle,
   setBoxPadding,
   setHistoryKeep,
   setCollapsedResultLines,
@@ -56,7 +57,7 @@ export default function (pi: ExtensionAPI): void {
         const parts = NUMERIC_SETTINGS.map(
           (setting) => `${setting.key}=${getConfigKey(config, setting.key)}`,
         );
-        return `density=${config.density} stats=${config.statsPlacement} ${parts.join(" ")}`;
+        return `density=${config.density}/${config.minimalStyle} stats=${config.statsPlacement} ${parts.join(" ")}`;
       };
       if (!trimmed) {
         ctx.ui.notify(`${summary()} (collapsed-lines 0 = hide output until ctrl+o)`, "info");
@@ -111,6 +112,23 @@ export default function (pi: ExtensionAPI): void {
         return;
       }
 
+      const minimalStyle = trimmed.match(/^minimal-style(?:\s+(\S+))?$/i);
+      if (minimalStyle) {
+        const raw = minimalStyle[1];
+        if (raw === undefined) {
+          ctx.ui.notify(`${summary()} (anchor | name)`, "info");
+          return;
+        }
+        const name = raw.trim().toLowerCase();
+        if (name !== "anchor" && name !== "name") {
+          ctx.ui.notify("Usage: /pi-ui minimal-style anchor|name", "warning");
+          return;
+        }
+        setMinimalStyle(name);
+        ctx.ui.notify(summary(), "info");
+        return;
+      }
+
       const profile = trimmed.match(/^profile(?:\s+(reset))?$/i);
       if (profile) {
         if (profile[1]) {
@@ -123,7 +141,7 @@ export default function (pi: ExtensionAPI): void {
       }
 
       ctx.ui.notify(
-        "Usage: /pi-ui [density minimal|default|detailed | collapsed-lines 0-200 | stats bottom-left|bottom-right|top-right | box-padding 0-2 | grep-files 1-20 | read-lines 1-200 | thinking-lines 0-5 | history-keep 0-2000 | profile [reset]]",
+        "Usage: /pi-ui [density minimal|default|detailed | minimal-style anchor|name | collapsed-lines 0-200 | stats bottom-left|bottom-right|top-right | box-padding 0-2 | grep-files 1-20 | read-lines 1-200 | thinking-lines 0-5 | history-keep 0-2000 | profile [reset]]",
         "warning",
       );
     },

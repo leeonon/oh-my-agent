@@ -88,6 +88,20 @@ Pi coding agent 的 UI 增强扩展包：启动页、思考块渲染、工具卡
 }
 ```
 
+### 极简单行的两种风格（minimalStyle）
+
+`density: "minimal"` 下每张工具卡折叠为一行，风格可切换（`/pi-ui minimal-style anchor|name`，配置键 `minimalStyle`，默认 `anchor`）：
+
+```
+│ $ npm run build && npm test --coverage → all tests passed (42)   ← anchor：│ 导轨 + 语义锚点字符
+│ ± src/a/b/c/config.ts → applied                                    （$ bash ● read ± edit ○ 搜索 ≡ ls * 其他）
+│ ➔ Bash ✓ npm test --coverage — passed                           ← name：彩色工具名 + 状态符
+```
+
+- 运行中整行 warning 色、失败 error 色、完成低对比暗色（anchor 风格遵循 pi-tool-call-markers 的低对比语义）
+- 摘要**保尾截断**：超长时 `…` + 尾部（命令的关键参数在尾部）
+- `→ 结果尾` 展示结果首行摘要；ctrl+o 展开该卡恢复完整盒子
+
 ## 命令
 
 ```
