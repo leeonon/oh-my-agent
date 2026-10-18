@@ -8,6 +8,7 @@ import {
   boxInsetLabel,
   boxLine,
   boxPads,
+  boxIndentRows,
   boxStatsBorders,
   boxWidth,
 } from "./box.ts";
@@ -47,8 +48,9 @@ function liveElapsedMs(state: FallbackBoxState): number | undefined {
   return state.startedAt === undefined ? undefined : performance.now() - state.startedAt;
 }
 
-function freezeElapsed(state: FallbackBoxState): number | undefined {
-  if (state.elapsedMs === undefined) state.elapsedMs = liveElapsedMs(state);
+function freezeElapsed(state: FallbackBoxState, context?: { durationMs?: number | undefined }): number | undefined {
+  // Official duration survives /reload and resume; local clock is the fallback.
+  if (state.elapsedMs === undefined) state.elapsedMs = context?.durationMs ?? liveElapsedMs(state);
   return state.elapsedMs;
 }
 
@@ -109,10 +111,12 @@ export function renderFallbackBoxCall(
   return {
     invalidate() {},
     render(width: number): string[] {
-      if (!state.resultSeen && context.isPartial !== false) {
-        return buildFallbackRows(theme, state, context, boxWidth(width), toolName, args);
-      }
-      return memo(width);
+      return boxIndentRows(context, width, (w) => {
+        if (!state.resultSeen && context.isPartial !== false) {
+          return buildFallbackRows(theme, state, context, boxWidth(w), toolName, args);
+        }
+        return memo(w);
+      });
     },
   };
 }
@@ -171,16 +175,17 @@ export function renderFallbackBoxResult(
       return {
         invalidate() {},
         render(width: number): string[] {
-          const w = boxWidth(width);
-          return raw
-            .split("\n")
-            .slice(0, PARTIAL_BODY_LIMIT)
-            .map((line) => boxLine(theme, line, w));
+          return boxIndentRows(context, width, (w) =>
+            raw
+              .split("\n")
+              .slice(0, PARTIAL_BODY_LIMIT)
+              .map((line) => boxLine(theme, line, boxWidth(w))),
+          );
         },
       };
     }
 
-    const elapsedMs = freezeElapsed(state);
+    const elapsedMs = freezeElapsed(state, context);
     const isError = Boolean(context.isError);
     void toolName;
     const elapsed = elapsedMs === undefined ? "" : `${formatElapsed(elapsedMs)} · `;
@@ -190,7 +195,8 @@ export function renderFallbackBoxResult(
 
     return {
       invalidate() {},
-      render: stateMemo(
+      render: (width: number): string[] =>
+      boxIndentRows(context, width, stateMemo(
         state,
         "result",
         (width: number): string[] => {
@@ -214,6 +220,7 @@ export function renderFallbackBoxResult(
           return rows;
         },
         () => `${options.expanded ? 1 : 0}${isError ? 1 : 0}${raw.length}${getConfig().boxPadding}${getConfig().statsPlacement}`,
+        ),
       ),
     };
   };

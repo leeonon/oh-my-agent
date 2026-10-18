@@ -1,119 +1,47 @@
-import { ToolExecutionComponent, type Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, Theme, ToolRenderers } from "@earendil-works/pi-coding-agent";
 import type { Component } from "@earendil-works/pi-tui";
 import { renderFallbackBoxCall, renderFallbackBoxResult } from "./fallback-box.ts";
 import { isReservedAgentTool } from "./mcp-name.ts";
-import { batchAwareResult } from "./tool-result.ts";
-import { renderReadCall } from "./tool-call.ts";
 
+/**
+ * Tools pi-ui re-registers with its own boxed renderers in tools.ts. Their
+ * definitions already carry renderShell/renderCall/renderResult, so the
+ * resolver chain hands them straight to `next()`.
+ */
 const OWNED_TOOLS = new Set(["read", "bash", "grep", "find", "ls", "edit", "write"]);
-const WRAPPER_MARK = Symbol.for("pi-ui.unknown-tool-decoration");
-const ORIGINAL = Symbol.for("pi-ui.unknown-tool-decoration.original");
 
-type RenderCall = (args: Record<string, unknown>, theme: Theme, context: unknown) => Component;
-type RenderResult = (
-  result: unknown,
-  options: { expanded: boolean; isPartial: boolean },
-  theme: Theme,
-  context: unknown,
-) => Component;
-
-type ToolHost = {
-  toolName: string;
-  contentBox?: {
-    setBgFn?: (fn: (text: string) => string) => void;
-    paddingX?: number;
-    paddingY?: number;
-  };
-  selfRenderContainer?: {
-    setBgFn?: (fn: (text: string) => string) => void;
-    paddingX?: number;
-    paddingY?: number;
-  };
-  getRenderShell?: () => string;
-  getCallRenderer: () => RenderCall | undefined;
-  getResultRenderer: () => RenderResult | undefined;
-  hasRendererDefinition: () => boolean;
-};
-
-function isOurs(fn: unknown): boolean {
-  return typeof fn === "function" && Boolean((fn as { [WRAPPER_MARK]?: boolean })[WRAPPER_MARK]);
+function fallbackRenderers(toolName: string): ToolRenderers {
+	return {
+		renderShell: "self",
+		renderCall: (args, theme, context) => {
+			try {
+				return renderFallbackBoxCall(toolName, args as Record<string, unknown>, theme, context as never);
+			} catch {
+				// Never let a malformed tool call take the transcript down.
+				return { render: () => [], invalidate() {} };
+			}
+		},
+		renderResult: (result, options, theme, context) =>
+			renderFallbackBoxResult(toolName)(result, options, theme, context as never),
+	};
 }
 
-function mark<T extends (this: ToolHost, ...args: never[]) => unknown>(fn: T, original: unknown): T {
-  const tagged = fn as T & { [WRAPPER_MARK]?: boolean; [ORIGINAL]?: unknown };
-  tagged[WRAPPER_MARK] = true;
-  tagged[ORIGINAL] = original;
-  return fn;
-}
-
-function unwrap(fn: unknown): unknown {
-  if (!isOurs(fn)) return fn;
-  return (fn as { [ORIGINAL]?: unknown })[ORIGINAL] ?? fn;
-}
-
-function neutralizeBackground(host: ToolHost): void {
-  const container =
-    host.getRenderShell?.() === "self" ? host.selfRenderContainer : host.contentBox;
-  if (!container) return;
-  container.paddingX = 0;
-  container.paddingY = 0;
-  container.setBgFn?.((text) => text);
-}
-
-function isUnknownTool(toolName: string): boolean {
-  return !isReservedAgentTool(toolName) && !OWNED_TOOLS.has(toolName);
-}
-
-export function installUnknownToolDecoration(): void {
-  const proto = ToolExecutionComponent.prototype as unknown as ToolHost;
-  const originalGetCall = unwrap(proto.getCallRenderer) as ToolHost["getCallRenderer"];
-  const originalGetResult = unwrap(proto.getResultRenderer) as ToolHost["getResultRenderer"];
-  const originalGetShell = unwrap(proto.getRenderShell) as ToolHost["getRenderShell"];
-  const originalHasDefinition = unwrap(proto.hasRendererDefinition) as ToolHost["hasRendererDefinition"];
-
-  // Definition-less extension tools would otherwise fall into Pi's generic
-  // contentText path, which bypasses every renderer hook. Claim them too.
-  proto.hasRendererDefinition = mark(function (this: ToolHost) {
-    if (isUnknownTool(this.toolName)) return true;
-    return originalHasDefinition.call(this);
-  }, originalHasDefinition);
-
-  proto.getCallRenderer = mark(function (this: ToolHost) {
-    if (this.toolName === "grep" || this.toolName === "read") neutralizeBackground(this);
-    if (this.toolName === "read") {
-      return (args, theme, context) => {
-        try {
-          return renderReadCall(args as never, theme, context as never);
-        } catch {
-          return { render: () => [], invalidate() {} };
-        }
-      };
-    }
-    if (!isUnknownTool(this.toolName)) {
-      return originalGetCall.call(this);
-    }
-    neutralizeBackground(this);
-    const name = this.toolName;
-    return (args, theme, context) =>
-      renderFallbackBoxCall(name, args, theme, context as never);
-  }, originalGetCall);
-
-  const readResult = batchAwareResult("read");
-  proto.getResultRenderer = mark(function (this: ToolHost) {
-    if (this.toolName === "grep" || this.toolName === "read") neutralizeBackground(this);
-    if (this.toolName === "read") return readResult as RenderResult;
-    if (!isUnknownTool(this.toolName)) {
-      return originalGetResult.call(this);
-    }
-    neutralizeBackground(this);
-    return renderFallbackBoxResult(this.toolName) as RenderResult;
-  }, originalGetResult);
-
-  proto.getRenderShell = mark(function (this: ToolHost) {
-    if (this.toolName === "grep" || this.toolName === "read") return "self";
-    if (!isUnknownTool(this.toolName)) {
-      return originalGetShell?.call(this) ?? "default";
-    }
-    return "self";
-  }, originalGetShell);
+/**
+ * Official renderer chain (Pi 1.0.1+): the resolver runs in extension load
+ * order, and whatever it returns becomes the ToolExecutionComponent's
+ * definition — including for tools that were never registered (MCP tools in
+ * resumed sessions, extension tools without definitions). Those used to fall
+ * into Pi's generic content-text path; they now get the pi-ui open box.
+ *
+ * This replaces the old ToolExecutionComponent prototype patch entirely: no
+ * monkey-patching, no session_start re-install, and the definition-less
+ * bypass is closed by design.
+ */
+export function registerPiUiToolRenderer(pi: ExtensionAPI): void {
+	pi.registerToolRenderer((toolName, next): ToolRenderers | undefined => {
+		// pi-ui's re-registered built-ins and the agent-runner's own tools
+		// keep their own (definition-level) rendering pipeline.
+		if (OWNED_TOOLS.has(toolName) || isReservedAgentTool(toolName)) return next();
+		return fallbackRenderers(toolName);
+	});
 }

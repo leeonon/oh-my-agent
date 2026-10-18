@@ -5,7 +5,22 @@ import type { StatsPlacement } from "./box.ts";
 
 export type { StatsPlacement };
 
+export type Density = "minimal" | "default" | "detailed";
+
+export interface PiUiColors {
+  /** Body colour of thinking text (theme token). Default: thinkingText. */
+  thinking?: string;
+  /** Colour of the thinking guide glyph (theme token). Default: accent. */
+  thinkingGuide?: string;
+  /** Per-tool name colours (theme tokens), keyed by tool name, `*` = fallback. */
+  tools?: Record<string, string>;
+}
+
 export interface PiUiConfig {
+  /** Rendering density preset: applies a bundle of per-item budgets. */
+  density: Density;
+  /** Custom colours for thinking / tool names (theme tokens). */
+  colors?: PiUiColors;
   /** Collapsed tool result body lines. 0 = hide output until expand. */
   collapsedResultLines: number;
   /** Where elapsed / file / line stats sit on a tool box. */
@@ -22,7 +37,38 @@ export interface PiUiConfig {
   historyKeep: number;
 }
 
+/**
+ * Density presets. Applied on `/pi-ui density <name>` (overwrites the
+ * per-item fields); single fields remain adjustable afterwards.
+ */
+export const DENSITY_PRESETS: Record<Density, Partial<Omit<PiUiConfig, "density">>> = {
+  minimal: {
+    collapsedResultLines: 0,
+    thinkingLines: 1,
+    grepFileLimit: 2,
+    readLineLimit: 10,
+    boxPadding: 0,
+  },
+  default: {
+    collapsedResultLines: 0,
+    thinkingLines: 2,
+    grepFileLimit: 4,
+    readLineLimit: 40,
+    boxPadding: 0,
+  },
+  detailed: {
+    collapsedResultLines: 6,
+    thinkingLines: 3,
+    grepFileLimit: 8,
+    readLineLimit: 80,
+    boxPadding: 0,
+  },
+};
+
+const DENSITIES = new Set<Density>(["minimal", "default", "detailed"]);
+
 const DEFAULT_CONFIG: PiUiConfig = {
+  density: "default",
   collapsedResultLines: 0,
   statsPlacement: "bottom-left",
   boxPadding: 0,
@@ -74,6 +120,8 @@ export function loadConfig(): void {
     const raw: unknown = JSON.parse(readFileSync(configPath(), "utf8"));
     if (typeof raw !== "object" || raw === null) return;
     const record = raw as {
+      density?: unknown;
+      colors?: unknown;
       collapsedResultLines?: unknown;
       statsPlacement?: unknown;
       boxPadding?: unknown;
@@ -83,6 +131,23 @@ export function loadConfig(): void {
       historyKeep?: unknown;
     };
     const next: PiUiConfig = { ...DEFAULT_CONFIG };
+    if (typeof record.density === "string" && DENSITIES.has(record.density as Density)) {
+      next.density = record.density as Density;
+    }
+    const colors = record.colors as Record<string, unknown> | undefined;
+    if (colors && typeof colors === "object") {
+      const parsed: PiUiColors = {};
+      if (typeof colors.thinking === "string") parsed.thinking = colors.thinking;
+      if (typeof colors.thinkingGuide === "string") parsed.thinkingGuide = colors.thinkingGuide;
+      if (colors.tools && typeof colors.tools === "object" && !Array.isArray(colors.tools)) {
+        const tools: Record<string, string> = {};
+        for (const [key, value] of Object.entries(colors.tools as Record<string, unknown>)) {
+          if (typeof value === "string") tools[key] = value;
+        }
+        if (Object.keys(tools).length > 0) parsed.tools = tools;
+      }
+      if (Object.keys(parsed).length > 0) next.colors = parsed;
+    }
     if (typeof record.collapsedResultLines === "number" && Number.isFinite(record.collapsedResultLines)) {
       next.collapsedResultLines = Math.max(0, Math.floor(record.collapsedResultLines));
     }
@@ -104,10 +169,18 @@ export function loadConfig(): void {
     if (typeof record.historyKeep === "number" && Number.isFinite(record.historyKeep)) {
       next.historyKeep = Math.max(0, Math.min(2000, Math.floor(record.historyKeep)));
     }
+    // `density` only records the active preset name; the preset values are
+    // applied by /pi-ui density (which never touches historyKeep — that is
+    // the user's own collapse control and lives outside the presets).
     store().current = next;
   } catch {
     store().current = { ...DEFAULT_CONFIG };
   }
+}
+
+export function applyDensity(density: Density): void {
+  store().current = { ...getConfig(), ...DENSITY_PRESETS[density], density };
+  persist();
 }
 
 export function setCollapsedResultLines(lines: number): void {
@@ -144,3 +217,4 @@ export function setHistoryKeep(keep: number): void {
   store().current = { ...getConfig(), historyKeep: Math.max(0, Math.min(2000, Math.floor(keep))) };
   persist();
 }
+

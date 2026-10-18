@@ -22,6 +22,7 @@ import {
   boxInsetLabel,
   boxLine,
   boxPads,
+  boxIndentRows,
   boxStatsBorders,
   boxWidth,
 } from "./box.ts";
@@ -133,8 +134,9 @@ function liveElapsedMs(state: BashBoxState): number | undefined {
   return state.startedAt === undefined ? undefined : performance.now() - state.startedAt;
 }
 
-function freezeElapsed(state: BashBoxState): number | undefined {
-  if (state.elapsedMs === undefined) state.elapsedMs = liveElapsedMs(state);
+function freezeElapsed(state: BashBoxState, context?: { durationMs?: number | undefined }): number | undefined {
+  // Official duration survives /reload and resume; local clock is the fallback.
+  if (state.elapsedMs === undefined) state.elapsedMs = context?.durationMs ?? liveElapsedMs(state);
   return state.elapsedMs;
 }
 
@@ -206,11 +208,13 @@ export function renderBashBoxCall(
   return {
     invalidate() {},
     render(width: number): string[] {
-      // Running cards re-derive per frame (live elapsed); settled ones memoize.
-      if (!state.resultSeen && context.isPartial !== false) {
-        return buildBashCallRows(args, theme, state, context, boxWidth(width));
-      }
-      return memo(width);
+      return boxIndentRows(context, width, (w) => {
+        // Running cards re-derive per frame (live elapsed); settled ones memoize.
+        if (!state.resultSeen && context.isPartial !== false) {
+          return buildBashCallRows(args, theme, state, context, boxWidth(w));
+        }
+        return memo(w);
+      });
     },
   };
 }
@@ -282,14 +286,14 @@ export const renderBashBoxResult: RenderResultFn = (result, options, theme, cont
     return {
       invalidate() {},
       render(width: number): string[] {
-        const w = boxWidth(width);
-        const lines = raw.split("\n").slice(0, PARTIAL_BODY_LIMIT);
-        return lines.map((line) => boxLine(theme, line, w));
+        return boxIndentRows(context, width, (w) =>
+          raw.split("\n").slice(0, PARTIAL_BODY_LIMIT).map((line) => boxLine(theme, line, boxWidth(w))),
+        );
       },
     };
   }
 
-  const elapsedMs = freezeElapsed(state);
+  const elapsedMs = freezeElapsed(state, context);
   const parsed = parseBashTerminalStatus(raw);
   const status = parsed.status;
   const body = /^\(no output\)$/i.test(parsed.body.trim()) ? "" : parsed.body;
@@ -298,7 +302,8 @@ export const renderBashBoxResult: RenderResultFn = (result, options, theme, cont
 
   return {
     invalidate() {},
-    render: stateMemo(
+    render: (width: number): string[] =>
+      boxIndentRows(context, width, stateMemo(
       state,
       "result",
       (width: number): string[] => {
@@ -323,6 +328,7 @@ export const renderBashBoxResult: RenderResultFn = (result, options, theme, cont
       },
       () =>
         `${options.expanded ? 1 : 0}${isError ? 1 : 0}${state.resultSeen ? 1 : 0}${status?.kind ?? ""}${body.length}${getConfig().boxPadding}${getConfig().statsPlacement}`,
+      ),
     ),
   };
 };

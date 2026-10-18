@@ -7,6 +7,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { fitLine } from "./fit-line.ts";
+import { getConfig } from "./config.ts";
 
 export const BOX_HORIZONTAL = "─";
 export const BOX_VERTICAL = "│";
@@ -172,6 +173,27 @@ export function boxBlankLine(theme: Theme, width: number): string {
 }
 
 /** Vertical padding inside a box. 0 removes the blank rows around content. */
+/**
+ * Horizontal padding for self-shell boxes: the session-wide `outputPad`
+ * (Pi applies it via `setPaddingX` on native self renderers). Expressed as
+ * left/right indent columns around the whole box — NOT vertical blank rows.
+ */
+export function boxHorizontalPad(context: { outputPad?: number } | undefined): number {
+	return Math.max(0, Math.min(4, Math.floor(context?.outputPad ?? 0)));
+}
+
+/** Run a box renderer with horizontal outputPad: shrink the width, indent every row. */
+export function boxIndentRows(
+	context: { outputPad?: number } | undefined,
+	width: number,
+	render: (w: number) => string[],
+): string[] {
+	const pad = boxHorizontalPad(context);
+	if (pad <= 0) return render(boxWidth(width));
+	const indent = " ".repeat(pad);
+	return render(Math.max(8, boxWidth(width) - 2 * pad)).map((line) => indent + line);
+}
+
 export function boxPads(theme: Theme, width: number, padding: number): string[] {
   const n = Math.max(0, Math.min(2, Math.floor(padding)));
   return Array.from({ length: n }, () => boxBlankLine(theme, width));

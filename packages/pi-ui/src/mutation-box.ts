@@ -28,6 +28,7 @@ import {
   boxInsetLabel,
   boxLine,
   boxPads,
+  boxIndentRows,
   boxStatsBorders,
   boxTintedLine,
   boxWidth,
@@ -65,8 +66,9 @@ function liveElapsedMs(state: MutationBoxState): number | undefined {
   return state.startedAt === undefined ? undefined : performance.now() - state.startedAt;
 }
 
-function freezeElapsed(state: MutationBoxState): number | undefined {
-  if (state.elapsedMs === undefined) state.elapsedMs = liveElapsedMs(state);
+function freezeElapsed(state: MutationBoxState, context?: { durationMs?: number | undefined }): number | undefined {
+  // Official duration survives /reload and resume; local clock is the fallback.
+  if (state.elapsedMs === undefined) state.elapsedMs = context?.durationMs ?? liveElapsedMs(state);
   return state.elapsedMs;
 }
 
@@ -135,10 +137,12 @@ function renderMutationCall(
   return {
     invalidate() {},
     render(width: number): string[] {
-      if (!state.resultSeen && context.isPartial !== false) {
-        return buildMutationRows(theme, state, context, boxWidth(width), label, display, pendingHint);
-      }
-      return memo(width);
+      return boxIndentRows(context, width, (w) => {
+        if (!state.resultSeen && context.isPartial !== false) {
+          return buildMutationRows(theme, state, context, boxWidth(w), label, display, pendingHint);
+        }
+        return memo(w);
+      });
     },
   };
 }
@@ -205,22 +209,24 @@ function renderMutationResult(
     return {
       invalidate() {},
       render(width: number): string[] {
-        const w = boxWidth(width);
-        return body
-          .split("\n")
-          .slice(0, PARTIAL_BODY_LIMIT)
-          .map((line) => boxLine(theme, line, w));
+        return boxIndentRows(context, width, (w) =>
+          body
+            .split("\n")
+            .slice(0, PARTIAL_BODY_LIMIT)
+            .map((line) => boxLine(theme, line, boxWidth(w))),
+        );
       },
     };
   }
 
-  const elapsedMs = freezeElapsed(state);
+  const elapsedMs = freezeElapsed(state, context);
   const isError = Boolean(context.isError);
   state.statsLabel = statsFooter(theme, elapsedMs, additions, removals, isError);
 
   return {
     invalidate() {},
-    render: stateMemo(
+    render: (width: number): string[] =>
+      boxIndentRows(context, width, stateMemo(
       state,
       "result",
       (width: number): string[] => {
@@ -267,6 +273,7 @@ function renderMutationResult(
       return rows;
       },
       () => `${options.expanded ? 1 : 0}${isError ? 1 : 0}${body.length}${getConfig().boxPadding}${getConfig().statsPlacement}`,
+      ),
     ),
   };
 }

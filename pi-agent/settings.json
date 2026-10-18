@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "0.87.1",
   "ui": {
     "tuiMode": "fullscreen"
   },
@@ -13,10 +13,6 @@
     "npm:@tintinweb/pi-subagents",
     "npm:@juicesharp/rpiv-web-tools",
     "npm:@juicesharp/rpiv-args",
-    {
-      "source": "npm:pi-tool-display",
-      "autoload": false
-    },
     "npm:@plannotator/pi-extension",
     "npm:@ayulab/pi-undoredo",
     "npm:context-mode",
@@ -30,14 +26,17 @@
     "npm:@pi-lab/input-history",
     "npm:pi-skillful",
     "npm:@pi-stef/figma",
-    "npm:pi-cc-extensions"
+    "npm:@narumitw/pi-starship",
+    {
+      "source": "../../.agents/packages/pi-ui",
+      "autoload": true
+    },
+    {
+      "source": "npm:pi-cc-extensions",
+      "autoload": false
+    }
   ],
-  "extensions": [
-    "./extensions/danger_guard/index.ts",
-    "./extensions/context/index.ts",
-    "./extensions/rename/index.ts",
-    "./extensions/welcome-screen/src/index.ts"
-  ],
+  "extensions": [],
   "skills": ["./skills", "~/.agents/skills/"],
   "prompts": ["./prompts"],
   "themes": ["./themes"],
@@ -48,7 +47,7 @@
     "preset": "default",
     "fixedEditor": false
   },
-  "theme": "catppuccin-mocha",
+  "theme": "gruvbox-material",
   "hideThinkingBlock": true,
   "images": {
     "blockImages": true

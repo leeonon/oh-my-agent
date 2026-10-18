@@ -21,7 +21,7 @@ import {
   renderWriteBoxResult,
 } from "./mutation-box.ts";
 import { loadConfig } from "./config.ts";
-import { installUnknownToolDecoration } from "./decorate.ts";
+import { registerPiUiToolRenderer } from "./decorate.ts";
 import { installProfiler, profileSnapshot, resetProfile } from "./profile.ts";
 import { installThinking, registerThinkingEvents } from "./thinking.ts";
 import { installHistory } from "./history.ts";
@@ -35,15 +35,14 @@ import { batchAwareResult } from "./tool-result.ts";
 
 export function registerToolRender(pi: ExtensionAPI): void {
   loadConfig();
-  installUnknownToolDecoration();
+  registerPiUiToolRenderer(pi);
   installThinking();
   registerThinkingEvents(pi);
   installHistory(pi);
   installProfiler();
 
-  pi.on("session_start", () => {
+  pi.on("session_start", (_event: unknown, ctx: unknown) => {
     resetBatchRegistry();
-    installUnknownToolDecoration();
   });
   pi.on("session_shutdown", () => resetBatchRegistry());
   pi.on("message_start", (event: { message?: { role?: string } }) => {

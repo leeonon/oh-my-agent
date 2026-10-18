@@ -4,25 +4,35 @@
   "description": "UI upgrades for Pi coding agent, inspired by oh-my-pi and Claude Code",
   "type": "module",
   "license": "MIT",
-  "keywords": ["pi-package", "pi-extension", "pi-coding-agent", "tui"],
-  "files": ["src", "README.md"],
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi-coding-agent",
+    "tui"
+  ],
+  "files": [
+    "src",
+    "README.md"
+  ],
   "pi": {
-    "extensions": ["./src/index.ts"]
+    "extensions": [
+      "./src/index.ts"
+    ]
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "preview:tool-call": "node --experimental-strip-types scripts/preview-tool-call.ts"
   },
   "peerDependencies": {
-    "@earendil-works/pi-ai": "*",
-    "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-tui": "*",
+    "@earendil-works/pi-ai": "^1.1.0",
+    "@earendil-works/pi-coding-agent": "^1.1.0",
+    "@earendil-works/pi-tui": "^1.1.0",
     "typebox": "*"
   },
   "devDependencies": {
-    "@earendil-works/pi-ai": "^0.86.0",
-    "@earendil-works/pi-coding-agent": "^0.86.0",
-    "@earendil-works/pi-tui": "^0.86.0",
+    "@earendil-works/pi-ai": "^1.1.0",
+    "@earendil-works/pi-coding-agent": "^1.1.0",
+    "@earendil-works/pi-tui": "^1.1.0",
     "@types/node": "^24.5.2",
     "typebox": "^1.3.27",
     "typescript": "^5.9.3"

@@ -20,13 +20,14 @@ const jiti = require("/Users/ly/.npm-global/lib/node_modules/@earendil-works/pi-
 const { ToolExecutionComponent, initTheme } = await jiti.import("@earendil-works/pi-coding-agent");
 const TuiMod = await jiti.import("@earendil-works/pi-tui");
 const Tui = (process.argv[3] === "alt") ? TuiMod.TuiAltScreen : TuiMod.TuiMainScreen;
-const { installUnknownToolDecoration } = await jiti.import("../src/decorate.ts");
+const { registerPiUiToolRenderer } = await jiti.import("../src/decorate.ts");
+registerPiUiToolRenderer({ registerToolRenderer: (r) => { globalThis.__piUiResolver = r; } });
 const { loadConfig } = await jiti.import("../src/config.ts");
 
 const mode = process.argv[2] ?? "oscillate";
 loadConfig();
 initTheme("catppuccin-mocha");
-installUnknownToolDecoration();
+
 
 // ---------- fake terminal ----------
 const writes = [];

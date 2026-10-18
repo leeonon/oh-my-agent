@@ -347,6 +347,7 @@ function postProcess(host: Host, message: AssistantLike): void {
       padding: host.outputPad,
       expanded: Boolean(host[EXPANDED]),
       theme: activeTheme,
+      agentActive: Boolean(active),
     });
     const toggle: Component = {
       render(width: number): string[] {
