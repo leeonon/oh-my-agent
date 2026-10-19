@@ -1,15 +1,17 @@
 {
-  "lastChangelogVersion": "0.87.1",
+  "lastChangelogVersion": "1.3.0",
   "ui": {
     "tuiMode": "fullscreen"
   },
   "packages": [
     "npm:pi-provider-kimi-code",
     "npm:pi-btw",
-    "npm:pi-goal",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-mcp-adapter",
-    "npm:pi-thinking-steps",
+    {
+      "source": "npm:pi-thinking-steps",
+      "autoload": false
+    },
     "npm:@tintinweb/pi-subagents",
     "npm:@juicesharp/rpiv-web-tools",
     "npm:@juicesharp/rpiv-args",
@@ -18,7 +20,6 @@
     "npm:context-mode",
     "npm:pi-simplify",
     "npm:pi-markdown-preview",
-    "npm:pi-opencode-bridge",
     "npm:@ff-labs/pi-fff",
     "git:github.com/earendil-works/pi-review-loop",
     "npm:pi-intercom",
@@ -26,32 +27,44 @@
     "npm:@pi-lab/input-history",
     "npm:pi-skillful",
     "npm:@pi-stef/figma",
-    "npm:@narumitw/pi-starship",
     {
       "source": "../../.agents/packages/pi-ui",
       "autoload": true
     },
     {
-      "source": "npm:pi-cc-extensions",
-      "autoload": false
-    }
+      "source": "../../.agents/packages/pi-frame",
+      "autoload": true
+    },
+    "npm:pi-commandcode-provider",
+    "npm:pi-goal-x",
+    "npm:pi-vim-editor"
   ],
-  "extensions": [],
-  "skills": ["./skills", "~/.agents/skills/"],
-  "prompts": ["./prompts"],
-  "themes": ["./themes"],
-  "defaultProvider": "zai-coding-cn",
-  "defaultModel": "glm-5.3",
+  "extensions": [
+    "-builtin:mcp"
+  ],
+  "skills": [
+    "./skills",
+    "~/.agents/skills/"
+  ],
+  "prompts": [
+    "./prompts"
+  ],
+  "themes": [
+    "./themes"
+  ],
+  "defaultProvider": "magpie",
+  "defaultModel": "group/smart-split",
   "defaultThinkingLevel": "high",
   "powerline": {
     "preset": "default",
     "fixedEditor": false
   },
-  "theme": "gruvbox-material",
   "hideThinkingBlock": true,
   "images": {
     "blockImages": true
   },
   "showHardwareCursor": true,
-  "editorPaddingX": 0
+  "editorPaddingX": 0,
+  "quietStartup": "header",
+  "deviceId": "9e87a800-32d3-4ab9-9e27-dcdb5dc813ae"
 }
