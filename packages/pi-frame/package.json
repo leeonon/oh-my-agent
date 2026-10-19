@@ -1,0 +1,42 @@
+{
+  "name": "pi-frame",
+  "version": "0.1.0",
+  "description": "Framed rounded input editor + modular two-row status footer for Pi coding agent",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi-coding-agent",
+    "tui",
+    "editor",
+    "footer"
+  ],
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "preview:editor": "node --experimental-strip-types scripts/preview-editor.ts",
+    "preview:footer": "node --experimental-strip-types scripts/preview-footer.ts"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "^1.1.0",
+    "@earendil-works/pi-tui": "^1.1.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^1.1.0",
+    "@earendil-works/pi-tui": "^1.1.0",
+    "@types/node": "^24.5.2",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
