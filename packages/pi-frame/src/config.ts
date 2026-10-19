@@ -7,6 +7,7 @@ export type SegmentId =
 	| "cwd"
 	| "git"
 	| "title"
+	| "turn"
 	| "model"
 	| "thinking"
 	| "tokens"
@@ -36,7 +37,7 @@ export const DEFAULT_CONFIG: PiFrameConfig = {
 		// Model id lives in the editor top border (right-aligned); keep it out
 		// of the footer to avoid showing it twice.
 		rows: [
-			["cwd", "git", "title", "spacer", "thinking"],
+			["cwd", "git", "title", "spacer", "turn", "thinking"],
 			["tokens", "cost", "context", "spacer", "mcp", "plugins"],
 		],
 	},
@@ -46,6 +47,7 @@ const SEGMENT_IDS = new Set<string>([
 	"cwd",
 	"git",
 	"title",
+	"turn",
 	"model",
 	"thinking",
 	"tokens",

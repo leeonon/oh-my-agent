@@ -158,6 +158,125 @@ function pluginTotal(): number | null {
 /* Segment rendering                                                   */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Current-turn stats (⏱ segment): wall time · TTFT · TPS               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Stats for the agent turn in progress — ONE full conversational turn,
+ * bounded by before_agent_start → agent_settled (NOT agent_start/end,
+ * which re-fire for every internal LLM request and would reset the clock
+ * on each tool call). Event collectors live in index.ts; the footer only
+ * formats. Ticking is driven by index.ts (250ms interval while running).
+ */
+export interface TurnLive {
+	/** Whole-turn start instant (before_agent_start), undefined when idle-since-boot. */
+	startedAt: number | undefined;
+	/** Frozen wall duration once the turn settles. */
+	settledMs: number | undefined;
+	/** Set when the turn ended via user abort. */
+	aborted: boolean;
+	/** Most recent first-token latency (last completed streaming step). */
+	ttftLastMs: number | undefined;
+	ttftSumMs: number;
+	ttftSamples: number;
+	/** Output tokens reported by message_end usage, summed over the turn. */
+	outputTokens: number;
+	/** Streaming time (post-TTFT) accumulated from settled steps. */
+	streamMs: number;
+	modelMs: number;
+	toolMs: number;
+	steps: number;
+}
+
+export function freshTurn(): TurnLive {
+	return {
+		startedAt: undefined,
+		settledMs: undefined,
+		aborted: false,
+		ttftLastMs: undefined,
+		ttftSumMs: 0,
+		ttftSamples: 0,
+		outputTokens: 0,
+		streamMs: 0,
+		modelMs: 0,
+		toolMs: 0,
+		steps: 0,
+	};
+}
+
+export const turnLive: TurnLive = freshTurn();
+
+/** Session-wide accumulators shown in /frame stats. */
+export const sessionTotals = {
+	turns: 0,
+	steps: 0,
+	wallMs: 0,
+	modelMs: 0,
+	toolMs: 0,
+	ttftSumMs: 0,
+	ttftSamples: 0,
+	outputTokens: 0,
+};
+
+export function fmtTurnDur(ms: number): string {
+	const whole = Math.round(ms / 1000);
+	if (whole < 60) return `${Math.max(1, Math.round(ms / 100) / 10)}s`;
+	const m = Math.floor(whole / 60);
+	if (m < 60) return `${m}m ${String(whole % 60).padStart(2, "0")}s`;
+	const h = Math.floor(m / 60);
+	return `${h}h ${String(m % 60).padStart(2, "0")}m`;
+}
+
+/** Live TPS over completed streaming steps (usage only exists at message_end). */
+export function liveTps(turn: TurnLive): number | undefined {
+	if (turn.streamMs <= 0 || turn.outputTokens <= 0) return undefined;
+	return (turn.outputTokens / turn.streamMs) * 1000;
+}
+
+/** Multi-line /frame stats panel: current turn + session totals. */
+export function statsPanel(fg: FgFn): string {
+	const dim = (t: string) => tint(fg, "dim", t);
+	const val = (t: string) => tint(fg, "muted", t);
+	const rows: string[] = [];
+
+	const t = turnLive;
+	const running = t.startedAt !== undefined && t.settledMs === undefined;
+	const wall = running && t.startedAt !== undefined ? Date.now() - t.startedAt : t.settledMs;
+	if (wall !== undefined) {
+		const parts = [
+			`${val(fmtTurnDur(wall))}${t.aborted ? tint(fg, "error", " ✘") : ""}`,
+			`${dim("模型 ")}${val(fmtTurnDur(t.modelMs))}`,
+			`${dim("工具 ")}${val(fmtTurnDur(t.toolMs))}`,
+			`${val(String(t.steps))}${dim(" 步")}`,
+		];
+		if (t.ttftLastMs !== undefined) parts.push(`${dim("TTFT ")}${val((t.ttftLastMs / 1000).toFixed(1))}s`);
+		const tps = liveTps(t);
+		if (tps !== undefined) parts.push(`${val(String(Math.round(tps)))} ${dim("tok/s")}`);
+		rows.push(`${dim(running ? "本轮（进行中）" : "本轮")}: ${parts.join(dim(" · "))}`);
+	} else {
+		rows.push(`${dim("本轮")}: ${dim("还没有完成的对话轮")}`);
+	}
+
+	const s = sessionTotals;
+	if (s.turns > 0) {
+		const streamMs = Math.max(0, s.modelMs - s.ttftSumMs);
+		const parts = [
+			`${val(String(s.turns))}${dim(" 轮 ")}${val(String(s.steps))}${dim(" 步")}`,
+			`${dim("总耗时 ")}${val(fmtTurnDur(s.wallMs))}`,
+			`${dim("模型 ")}${val(fmtTurnDur(s.modelMs))}`,
+			`${dim("工具 ")}${val(fmtTurnDur(s.toolMs))}`,
+		];
+		if (s.ttftSamples > 0) {
+			parts.push(`${dim("TTFT 均值 ")}${val((s.ttftSumMs / s.ttftSamples / 1000).toFixed(1))}s`);
+		}
+		if (streamMs > 0) parts.push(`${val(String(Math.round((s.outputTokens / streamMs) * 1000)))} ${dim("tok/s")}`);
+		parts.push(`${dim("累计输出 ")}${val(String(Math.round(s.outputTokens)))} ${dim("tok")}`);
+		rows.push(`${dim("会话")}: ${parts.join(dim(" · "))}`);
+	}
+	return rows.join("\n");
+}
+
 function segmentText(id: SegmentId, ctx: FooterCtx, footerData: FooterData, fg: FgFn): string | null {
 	switch (id) {
 		case "cwd":
@@ -165,7 +284,23 @@ function segmentText(id: SegmentId, ctx: FooterCtx, footerData: FooterData, fg: 
 		case "git": {
 			const branch = footerData.getGitBranch();
 			if (!branch || branch === "detached") return null;
-			return tint(fg, "dim", branch);
+			return tint(fg, "dim", `⎇ ${branch}`);
+		}
+		case "turn": {
+			const t = turnLive;
+			const running = t.startedAt !== undefined;
+			const wall = running && t.startedAt !== undefined ? Date.now() - t.startedAt : t.settledMs;
+			if (wall === undefined) return null;
+			const sep = tint(fg, "dim", " · ");
+			const parts = [
+				`${tint(fg, running ? "warning" : "dim", `⏱ ${fmtTurnDur(wall)}`)}`,
+			];
+			if (t.ttftLastMs !== undefined) {
+				parts.push(tint(fg, "dim", `TTFT ${(t.ttftLastMs / 1000).toFixed(1)}s`));
+			}
+			const tps = liveTps(t);
+			if (tps !== undefined) parts.push(tint(fg, "dim", `${Math.round(tps)} tok/s`));
+			return parts.join(sep);
 		}
 		case "title": {
 			const name = ctx.sessionManager.getSessionName();
@@ -268,6 +403,11 @@ function renderRow(ids: SegmentId[], width: number, texts: (string | null)[]): s
 /* Footer component                                                    */
 /* ------------------------------------------------------------------ */
 
+/** Environment segments drop first on narrow terminals; metrics never drop. */
+function dropsWhenNarrow(id: SegmentId): boolean {
+	return id === "mcp" || id === "plugins";
+}
+
 export function renderFooterRows(
 	rows: SegmentId[][],
 	width: number,
@@ -275,14 +415,16 @@ export function renderFooterRows(
 	footerData: FooterData,
 	fg: FgFn,
 ): string[] {
+	const narrow = width < 90;
 	return rows
 		.map((row) => {
+			const effective = narrow ? row.filter((id) => !dropsWhenNarrow(id)) : row;
 			// texts must be parallel to the NON-spacer ids: renderRow walks ids
 			// and only advances the text cursor for non-spacer positions.
-			const texts = row
+			const texts = effective
 				.filter((id) => id !== "spacer")
 				.map((id) => segmentText(id, ctx, footerData, fg));
-			return renderRow(row, width, texts);
+			return renderRow(effective, width, texts);
 		})
 		.filter((line) => line.length > 0)
 		.map((line) => truncateToWidth(line, width));

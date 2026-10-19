@@ -13,7 +13,7 @@ const jiti = require("/Users/ly/.npm-global/lib/node_modules/@earendil-works/pi-
 	},
 });
 
-const { renderFooterRows } = await jiti.import("../src/footer.ts");
+const { renderFooterRows, turnLive } = await jiti.import("../src/footer.ts");
 const { DEFAULT_CONFIG } = await jiti.import("../src/config.ts");
 
 const DIM = "\x1b[2m";
@@ -47,5 +47,23 @@ for (const width of [100, 60]) {
 	for (const line of renderFooterRows(DEFAULT_CONFIG.footer.rows, width, ctx, footerData, fg)) {
 		console.log(`|${line}|`);
 	}
+	console.log("|— running —");
+	turnLive.startedAt = Date.now() - 4200;
+	turnLive.settledMs = undefined;
+	turnLive.ttftLastMs = 1800;
+	turnLive.outputTokens = 220;
+	turnLive.streamMs = 5200;
+	for (const line of renderFooterRows(DEFAULT_CONFIG.footer.rows, width, ctx, footerData, fg)) {
+		console.log(`|${line}|`);
+	}
+	console.log("|— frozen —");
+	turnLive.startedAt = undefined;
+	turnLive.settledMs = 72_400;
+	turnLive.aborted = false;
+	for (const line of renderFooterRows(DEFAULT_CONFIG.footer.rows, width, ctx, footerData, fg)) {
+		console.log(`|${line}|`);
+	}
+	turnLive.startedAt = undefined;
+	turnLive.settledMs = undefined;
 	console.log("└───");
 }

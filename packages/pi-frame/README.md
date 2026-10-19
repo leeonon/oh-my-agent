@@ -29,7 +29,9 @@ Pi 原生输入框只有上下两条横线（无侧边）。pi-frame 替换为�
 ↑12.4k ↓3.2k  $0.42  ctx 34% (68.0k/200k)                mcp 8  plugins 12
 ```
 
-可用模块：`cwd` `git` `title` `model` `thinking` `tokens` `cost` `context` `mcp` `plugins` `spacer`（弹性空隙，平分剩余宽度，多个可放）。`context` 的展示为 `68k/200k (34%) ●●●······`——10 格点状进度条，随用量绿→黄→红，无任何边框装饰。
+可用模块：`cwd` `git` `title` `turn` `model` `thinking` `tokens` `cost` `context` `mcp` `plugins` `spacer`（弹性空隙，平分剩余宽度，多个可放）。`context` 的展示为 `68k/200k (34%) ●●●······`——10 格点状进度条，随用量绿→黄→红，无任何边框装饰。
+
+`turn` 是整轮统计（默认第一行右侧）：`⏱ 4.2s · TTFT 1.8s · 42 tok/s`。边界为 `before_agent_start → agent_settled`（一条消息发出到任务完成，**不随工具调用重置**——pi 的 `agent_start/end` 每次内部 LLM 请求都会重发，不能用作整轮时钟）。运行中每 250ms 跳动，TTFT 跟随最近一次流式请求，TPS 按已完成步累计（usage 在每步流结束时上报）；完成定格，下一轮开始清零。窄终端（<90 列）先隐藏 `mcp`/`plugins`，计量段永不丢。
 
 - token/成本统计带缓存：会话是 append-only，按（条目数 + 末条目引用）判定，未变化时 O(1)
 - 上下文用量 ≥80% 时自动变红
@@ -55,6 +57,7 @@ Pi 原生输入框只有上下两条横线（无侧边）。pi-frame 替换为�
 ## 命令
 
 - `/frame` — 查看当前状态
+- `/frame stats` — 轮次统计面板（本轮 + 会话累计：轮/步/总耗时/模型耗时/工具耗时/TTFT 均值/TPS/累计输出 tokens）
 - `/frame reload` — 重读配置文件
 - `/frame editor on|off` — 开关圆角输入框（写回配置）
 - `/frame footer on|off` — 开关 footer（写回配置）
