@@ -75,7 +75,7 @@ const MINIMAL_STYLES = new Set<MinimalStyle>(["anchor", "name"]);
 
 const DEFAULT_CONFIG: PiUiConfig = {
   density: "default",
-  minimalStyle: "anchor",
+  minimalStyle: "name",
   collapsedResultLines: 0,
   statsPlacement: "bottom-left",
   boxPadding: 0,

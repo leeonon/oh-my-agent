@@ -126,11 +126,11 @@ function minimalToolLine(
   const pad = " ".repeat(Math.max(0, Math.floor(Number(tool.outputPad ?? 1)) || 0));
 
   if ((getConfig().minimalStyle ?? "anchor") === "anchor") {
-    // `│ $ npm test → done` — rail + semantic glyph, low-contrast states.
+    // `$ npm test → done` — semantic glyph identifies the module (no rail);
+    // low-contrast states: running=warning, error=red, done=dim.
     const anchor = TOOL_ANCHORS[rawName] ?? "*";
     const stateToken = isError ? "error" : running ? "warning" : "dim";
-    const rail = dim(theme, "│");
-    const line = `${rail} ${fg(stateToken, `${anchor} ${summary}`)}`;
+    const line = `${fg(stateToken, `${anchor} ${summary}`)}`;
     const tailPart = tail ? ` ${fg(isError ? "error" : "dim", `→ ${tail}`)}` : "";
     return fitLine(`${pad}${line}${tailPart}`, Math.max(1, width));
   }
