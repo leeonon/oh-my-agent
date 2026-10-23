@@ -1,17 +1,28 @@
 {
-  "lastChangelogVersion": "1.3.0",
-  "ui": {
-    "tuiMode": "fullscreen"
+  "defaultModel": "group/smart-split",
+  "defaultProvider": "magpie",
+  "defaultTools": [
+    "+grep",
+    "+find",
+    "+ls",
+    "+powershell",
+    "+codemode",
+    "+tool_search"
+  ],
+  "defaultThinkingLevel": "high",
+  "deviceId": "9e87a800-32d3-4ab9-9e27-dcdb5dc813ae",
+  "editorPaddingX": 0,
+  "extensions": ["-builtin:mcp", "-./extensions/danger_guard/index.ts"],
+  "hideThinkingBlock": true,
+  "images": {
+    "blockImages": false
   },
+  "lastChangelogVersion": "1.4.0",
   "packages": [
     "npm:pi-provider-kimi-code",
     "npm:pi-btw",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-mcp-adapter",
-    {
-      "source": "npm:pi-thinking-steps",
-      "autoload": false
-    },
     "npm:@tintinweb/pi-subagents",
     "npm:@juicesharp/rpiv-web-tools",
     "npm:@juicesharp/rpiv-args",
@@ -28,43 +39,28 @@
     "npm:pi-skillful",
     "npm:@pi-stef/figma",
     {
-      "source": "../../.agents/packages/pi-ui",
-      "autoload": true
+      "autoload": true,
+      "source": "../../.agents/packages/pi-ui"
     },
     {
-      "source": "../../.agents/packages/pi-frame",
-      "autoload": true
+      "autoload": true,
+      "source": "../../.agents/packages/pi-frame"
     },
     "npm:pi-commandcode-provider",
     "npm:pi-goal-x",
-    "npm:pi-vim-editor"
+    "npm:pi-vim-editor",
+    "/Users/ly/.vibe-island/pi-extension"
   ],
-  "extensions": [
-    "-builtin:mcp"
-  ],
-  "skills": [
-    "./skills",
-    "~/.agents/skills/"
-  ],
-  "prompts": [
-    "./prompts"
-  ],
-  "themes": [
-    "./themes"
-  ],
-  "defaultProvider": "magpie",
-  "defaultModel": "group/smart-split",
-  "defaultThinkingLevel": "high",
   "powerline": {
-    "preset": "default",
-    "fixedEditor": false
+    "fixedEditor": false,
+    "preset": "default"
   },
-  "hideThinkingBlock": true,
-  "images": {
-    "blockImages": true
-  },
-  "showHardwareCursor": true,
-  "editorPaddingX": 0,
+  "prompts": ["./prompts"],
   "quietStartup": "header",
-  "deviceId": "9e87a800-32d3-4ab9-9e27-dcdb5dc813ae"
+  "showHardwareCursor": true,
+  "skills": ["./skills", "~/.agents/skills/"],
+  "themes": ["./themes"],
+  "ui": {
+    "tuiMode": "fullscreen"
+  }
 }
