@@ -15,8 +15,48 @@
             "text",
             "image"
           ],
-          "maxTokens": 1048576,
+          "maxTokens": 393216,
           "name": "难题给强模型，简单的给便宜模型 · routing group",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": null
+          }
+        },
+        {
+          "contextWindow": 1048576,
+          "id": "group/glm-k3-ds",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 393216,
+          "name": "GLM-K3-DS · routing group",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": "max",
+            "medium": null,
+            "minimal": null,
+            "off": null,
+            "xhigh": null
+          }
+        },
+        {
+          "contextWindow": 1048576,
+          "id": "group/k3-grok",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "K3-Grok · routing group",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -29,147 +69,19 @@
           }
         },
         {
-          "contextWindow": 131072,
-          "cost": {
-            "cacheRead": 0.11,
-            "cacheWrite": 0,
-            "input": 0.6,
-            "output": 2.2
-          },
-          "id": "zhipu/glm-4.5",
+          "contextWindow": 1048576,
+          "id": "group/group",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 98304,
-          "name": "GLM-4.5 · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 131072,
-          "cost": {
-            "cacheRead": 0.03,
-            "cacheWrite": 0,
-            "input": 0.2,
-            "output": 1.1
-          },
-          "id": "zhipu/glm-4.5-air",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 98304,
-          "name": "GLM-4.5-Air · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 204800,
-          "cost": {
-            "cacheRead": 0.11,
-            "cacheWrite": 0,
-            "input": 0.6,
-            "output": 2.2
-          },
-          "id": "zhipu/glm-4.6",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-4.6 · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 204800,
-          "cost": {
-            "cacheRead": 0.11,
-            "cacheWrite": 0,
-            "input": 0.6,
-            "output": 2.2
-          },
-          "id": "zhipu/glm-4.7",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-4.7 · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 204800,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 0,
-            "input": 1,
-            "output": 3.2
-          },
-          "id": "zhipu/glm-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5 · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 200000,
-          "id": "zhipu/glm-5-turbo",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5-Turbo · Zhipu GLM",
+          "maxTokens": 393216,
+          "name": "轮次切换 · routing group",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
             "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 200000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "zhipu/glm-5.1",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.1 · Zhipu GLM",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "zhipu/glm-5.2",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.2 · Zhipu GLM",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": null,
-            "max": "max",
+            "max": null,
             "medium": null,
             "minimal": null,
             "off": null,
@@ -177,20 +89,14 @@
           }
         },
         {
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "zhipu/glm-5.3",
+          "contextWindow": 1048576,
+          "id": "group/glm-ds",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 131072,
-          "name": "GLM-5.3 · Zhipu GLM",
+          "maxTokens": 393216,
+          "name": "glm-ds · routing group",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -205,10 +111,10 @@
         {
           "contextWindow": 1000000,
           "cost": {
-            "cacheRead": 0.03,
+            "cacheRead": 0.03436,
             "cacheWrite": 0,
-            "input": 0.15,
-            "output": 0.5
+            "input": 0.11952,
+            "output": 0.41831
           },
           "id": "zhipu/glm-5.3-flash",
           "input": [
@@ -229,33 +135,7 @@
           }
         },
         {
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.075,
-            "cacheWrite": 0,
-            "input": 0.37,
-            "output": 1.25
-          },
-          "id": "zhipu/glm-5.3-flashx",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.3-FlashX · Zhipu GLM",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
+          "contextWindow": 1048576,
           "cost": {
             "cacheRead": 0.003,
             "cacheWrite": 0,
@@ -281,7 +161,7 @@
           }
         },
         {
-          "contextWindow": 1000000,
+          "contextWindow": 1048576,
           "cost": {
             "cacheRead": 0.022,
             "cacheWrite": 0,
@@ -314,13 +194,13 @@
             "input": 3,
             "output": 15
           },
-          "id": "moonshot-cn/kimi-k3",
+          "id": "kimi-code-cn/k3",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 1048576,
-          "name": "Kimi K3 · Kimi (China)",
+          "maxTokens": 131072,
+          "name": "K3 · Kimi Code (China)",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -328,60 +208,29 @@
             "max": "max",
             "medium": null,
             "minimal": null,
-            "off": null,
+            "off": "none",
             "xhigh": null
           }
         },
         {
-          "contextWindow": 262144,
-          "cost": {
-            "cacheRead": 0.19,
-            "cacheWrite": 0,
-            "input": 0.95,
-            "output": 4
-          },
-          "id": "moonshot-cn/kimi-k2.7-code",
+          "contextWindow": 1048576,
+          "id": "kimi-code-cn/kimi-for-coding",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 262144,
-          "name": "Kimi K2.7 Code · Kimi (China)",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 262144,
-          "cost": {
-            "cacheRead": 0.38,
-            "cacheWrite": 0,
-            "input": 1.9,
-            "output": 8
-          },
-          "id": "moonshot-cn/kimi-k2.7-code-highspeed",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 262144,
-          "name": "Kimi K2.7 Code HighSpeed · Kimi (China)",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 262144,
-          "cost": {
-            "cacheRead": 0.16,
-            "cacheWrite": 0,
-            "input": 0.95,
-            "output": 4
-          },
-          "id": "moonshot-cn/kimi-k2.6",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 262144,
-          "name": "Kimi K2.6 · Kimi (China)",
-          "reasoning": true
+          "maxTokens": 32768,
+          "name": "K2.8 Preview · Kimi Code (China)",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": "max",
+            "medium": null,
+            "minimal": null,
+            "off": "none",
+            "xhigh": null
+          }
         },
         {
           "api": "openai-responses",
@@ -474,332 +323,6 @@
           }
         },
         {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.25,
-            "cacheWrite": 12.5,
-            "input": 10,
-            "output": 50
-          },
-          "id": "copilot/claude-fable-5.1",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Fable 5.1 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 1,
-            "cacheWrite": 12.5,
-            "input": 10,
-            "output": 50
-          },
-          "id": "copilot/claude-fable-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Fable 5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.01,
-            "cacheWrite": 0.125,
-            "input": 0.1,
-            "output": 0.5
-          },
-          "id": "copilot/claude-haiku-5.5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Haiku 5.5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "id": "copilot/claude-opus-4.8-fast",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Opus 4.8 (fast mode) · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.5,
-            "cacheWrite": 6.25,
-            "input": 5,
-            "output": 25
-          },
-          "id": "copilot/claude-opus-4.8",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Opus 4.8 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 5,
-            "input": 4,
-            "output": 20
-          },
-          "id": "copilot/claude-opus-5.5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Opus 5.5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.5,
-            "cacheWrite": 6.25,
-            "input": 5,
-            "output": 25
-          },
-          "id": "copilot/claude-opus-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Opus 5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.1,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "copilot/claude-sonnet-5.5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Sonnet 5.5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "copilot/claude-sonnet-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Sonnet 5 · Copilot",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 1048576,
-          "cost": {
-            "cacheRead": 0.075,
-            "cacheWrite": 0,
-            "input": 0.75,
-            "output": 3.75
-          },
-          "id": "copilot/gemini-3.7-flash",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 65536,
-          "name": "Gemini 3.7 Flash · Copilot",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
           "contextWindow": 1048576,
           "cost": {
             "cacheRead": 0.075,
@@ -820,6 +343,32 @@
             "low": "low",
             "max": null,
             "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": null
+          }
+        },
+        {
+          "contextWindow": 1048576,
+          "cost": {
+            "cacheRead": 0.3,
+            "cacheWrite": 3,
+            "input": 3,
+            "output": 15
+          },
+          "id": "copilot/kimi-k3",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "Kimi K3 · Copilot",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": "max",
+            "medium": null,
             "minimal": null,
             "off": null,
             "xhigh": null
@@ -849,246 +398,6 @@
             "minimal": null,
             "off": null,
             "xhigh": null
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 272000,
-          "cost": {
-            "cacheRead": 0.075,
-            "cacheWrite": 0,
-            "input": 0.75,
-            "output": 4.5
-          },
-          "id": "copilot/gpt-5.4-mini",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.4 mini · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.25,
-            "cacheWrite": 0,
-            "input": 2.5,
-            "output": 15
-          },
-          "id": "copilot/gpt-5.4",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.4 · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.5,
-            "cacheWrite": 0,
-            "input": 5,
-            "output": 30
-          },
-          "id": "copilot/gpt-5.5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.5 · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.02,
-            "cacheWrite": 0.25,
-            "input": 0.2,
-            "output": 1.2
-          },
-          "id": "copilot/gpt-5.6-luna",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Luna · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.4,
-            "cacheWrite": 5,
-            "input": 4,
-            "output": 20
-          },
-          "id": "copilot/gpt-5.6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Sol · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 12
-          },
-          "id": "copilot/gpt-5.6-terra",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Terra · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 0.1,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "copilot/gpt-6.1-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6.1 Sol · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 922000,
-          "cost": {
-            "cacheRead": 1,
-            "cacheWrite": 12.5,
-            "input": 10,
-            "output": 50
-          },
-          "id": "copilot/gpt-6-astra",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6 Astra · Copilot",
-          "promptCache": {
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
           }
         },
         {
@@ -1149,53 +458,6 @@
             "minimal": null,
             "off": "none",
             "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 1048576,
-          "cost": {
-            "cacheRead": 0.3,
-            "cacheWrite": 3,
-            "input": 3,
-            "output": 15
-          },
-          "id": "copilot/kimi-k3",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "Kimi K3 · Copilot",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 128000,
-          "id": "copilot/mai-code-1.1-flash",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "MAI-Code-1.1-Flash · Copilot",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": null
           }
         },
         {
@@ -1305,33 +567,6 @@
         },
         {
           "api": "openai-responses",
-          "contextWindow": 256000,
-          "cost": {
-            "cacheRead": 0.5,
-            "cacheWrite": 0,
-            "input": 2,
-            "output": 6
-          },
-          "id": "grok/grok-4.6",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 256000,
-          "name": "Grok 4.6 · Grok (SuperGrok)",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "openai-responses",
           "contextWindow": 500000,
           "cost": {
             "cacheRead": 0.5,
@@ -1360,18 +595,18 @@
           "api": "openai-responses",
           "contextWindow": 256000,
           "cost": {
-            "cacheRead": 0.3,
+            "cacheRead": 0.5,
             "cacheWrite": 0,
             "input": 2,
             "output": 6
           },
-          "id": "grok/grok-4.5",
+          "id": "grok/grok-4.6",
           "input": [
             "text",
             "image"
           ],
           "maxTokens": 256000,
-          "name": "Grok 4.5 · Grok (SuperGrok)",
+          "name": "Grok 4.6 · Grok (SuperGrok)",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -1380,100 +615,6 @@
             "medium": "medium",
             "minimal": null,
             "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "api": "openai-responses",
-          "contextWindow": 500000,
-          "cost": {
-            "cacheRead": 0.3,
-            "cacheWrite": 0,
-            "input": 2,
-            "output": 6
-          },
-          "id": "grok/grok-4.5@500k",
-          "input": [
-            "text",
-            "image"
-          ],
-          "name": "Grok 4.5 @ 500k · Grok (SuperGrok)",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": null,
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.1,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "commandcode-plan/claude-sonnet-5-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Sonnet 5.5 · Command Code Plan",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:3425",
-          "compat": {
-            "forceAdaptiveThinking": true
-          },
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.01,
-            "cacheWrite": 0.125,
-            "input": 0.1,
-            "output": 0.5
-          },
-          "id": "commandcode-plan/claude-haiku-5-5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "Claude Haiku 5.5 · Command Code Plan",
-          "promptCache": {
-            "long": 3600,
-            "short": 300
-          },
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
             "xhigh": "xhigh"
           }
         },
@@ -1492,32 +633,6 @@
           ],
           "maxTokens": 128000,
           "name": "GPT-6 Luna · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 1050000,
-          "cost": {
-            "cacheRead": 0.4,
-            "cacheWrite": 5,
-            "input": 4,
-            "output": 20
-          },
-          "id": "commandcode-plan/gpt-5.6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Sol · Command Code Plan",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -1558,32 +673,6 @@
         {
           "contextWindow": 1000000,
           "cost": {
-            "cacheRead": 0.022,
-            "cacheWrite": 0,
-            "input": 0.66,
-            "output": 1.98
-          },
-          "id": "commandcode-plan/deepseek/deepseek-v4-pro",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 200000,
-          "name": "DeepSeek V4 Pro (latest) · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
-          "cost": {
             "cacheRead": 0.003,
             "cacheWrite": 0,
             "input": 0.15,
@@ -1603,25 +692,25 @@
             "max": "max",
             "medium": null,
             "minimal": null,
-            "off": null,
+            "off": "none",
             "xhigh": null
           }
         },
         {
           "contextWindow": 1000000,
           "cost": {
-            "cacheRead": 0.003,
+            "cacheRead": 0.022,
             "cacheWrite": 0,
-            "input": 0.15,
-            "output": 0.6
+            "input": 0.66,
+            "output": 1.98
           },
-          "id": "commandcode-plan/deepseek/deepseek-v4-flash-vision-exp",
+          "id": "commandcode-plan/deepseek/deepseek-v4-pro",
           "input": [
             "text",
             "image"
           ],
           "maxTokens": 200000,
-          "name": "DeepSeek V4 Flash Vision (exp) · Command Code Plan",
+          "name": "DeepSeek V4 Pro (latest) · Command Code Plan",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -1629,7 +718,7 @@
             "max": "max",
             "medium": null,
             "minimal": null,
-            "off": null,
+            "off": "none",
             "xhigh": null
           }
         },
@@ -1654,66 +743,158 @@
           }
         },
         {
-          "contextWindow": 1000000,
-          "id": "commandcode-plan/deepseek/deepseek-v4.1-flash",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 200000,
-          "name": "DeepSeek V4.1 Flash · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
-          "id": "commandcode-plan/deepseek/deepseek-v4.1-flash-fast",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 32768,
-          "name": "DeepSeek V4.1 Flash Fast (latest) · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": "none",
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
+          "contextWindow": 200000,
           "cost": {
-            "cacheRead": 0.3,
-            "cacheWrite": 3,
-            "input": 3,
-            "output": 15
+            "cacheRead": 0.06,
+            "cacheWrite": 0.375,
+            "input": 0.3,
+            "output": 1.2
           },
-          "id": "commandcode-plan/moonshotai/Kimi-K3",
+          "id": "commandcode-plan/MiniMaxAI/MiniMax-M2.7",
           "input": [
             "text",
             "image"
           ],
           "maxTokens": 131072,
-          "name": "Kimi K3 · Command Code Plan",
+          "name": "MiniMax M2.7 · Command Code Plan",
+          "reasoning": true
+        },
+        {
+          "contextWindow": 1048576,
+          "cost": {
+            "cacheRead": 0.0036,
+            "cacheWrite": 0,
+            "input": 0.435,
+            "output": 0.87
+          },
+          "id": "commandcode-plan/xiaomi/mimo-v2.6-pro",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "MiMo V2.6 Pro · Command Code Plan",
+          "reasoning": true
+        },
+        {
+          "contextWindow": 1000000,
+          "cost": {
+            "cacheRead": 0.016,
+            "cacheWrite": 0.2,
+            "input": 0.15,
+            "output": 0.47
+          },
+          "id": "commandcode-plan/Qwen/Qwen3.8-Flash",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "Qwen 3.8 Flash · Command Code Plan",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": null,
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": "xhigh"
+          }
+        },
+        {
+          "contextWindow": 1000000,
+          "cost": {
+            "cacheRead": 0.25,
+            "cacheWrite": 2.5,
+            "input": 2,
+            "output": 6
+          },
+          "id": "commandcode-plan/Qwen/Qwen3.8-Max",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "Qwen 3.8 Max · Command Code Plan",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": null,
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": "xhigh"
+          }
+        },
+        {
+          "contextWindow": 1000000,
+          "cost": {
+            "cacheRead": 0.075,
+            "cacheWrite": 0,
+            "input": 0.75,
+            "output": 3.75
+          },
+          "id": "commandcode-plan/google/gemini-3.8-flash",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 65536,
+          "name": "Gemini 3.8 Flash · Command Code Plan",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": null
+          }
+        },
+        {
+          "contextWindow": 1048576,
+          "id": "commandcode-plan/reflection/beam:free",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 131072,
+          "name": "Beam 1.0 · Command Code Plan",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
             "low": "low",
             "max": "max",
-            "medium": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": "xhigh"
+          }
+        },
+        {
+          "contextWindow": 256000,
+          "cost": {
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "input": 0,
+            "output": 0
+          },
+          "id": "commandcode-plan/poolside/laguna-s-2.1-free",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 32000,
+          "name": "Laguna S 2.1 · Command Code Plan",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": null,
+            "medium": "medium",
             "minimal": null,
             "off": null,
             "xhigh": null
@@ -1721,64 +902,42 @@
         },
         {
           "contextWindow": 256000,
-          "cost": {
-            "cacheRead": 0.19,
-            "cacheWrite": 0,
-            "input": 0.95,
-            "output": 4
-          },
-          "id": "commandcode-plan/moonshotai/Kimi-K2.7-Code",
+          "id": "commandcode-plan/stealth/glyph-cluster:free",
           "input": [
             "text",
             "image"
           ],
           "maxTokens": 200000,
-          "name": "Kimi K2.7 Code · Command Code Plan",
-          "reasoning": true
+          "name": "Glyph Cluster · Command Code Plan",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": "xhigh"
+          }
         },
         {
-          "contextWindow": 262000,
-          "cost": {
-            "cacheRead": 0.38,
-            "cacheWrite": 0,
-            "input": 1.9,
-            "output": 8
-          },
-          "id": "commandcode-plan/moonshotai/Kimi-K2.7-Code-Highspeed",
+          "id": "qoder/ultimate",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 200000,
-          "name": "Kimi K2.7 Code HighSpeed · Command Code Plan",
-          "reasoning": true
+          "name": "ultimate · Qoder",
+          "reasoning": false
         },
         {
-          "contextWindow": 256000,
-          "cost": {
-            "cacheRead": 0.16,
-            "cacheWrite": 0,
-            "input": 0.95,
-            "output": 4
-          },
-          "id": "commandcode-plan/moonshotai/Kimi-K2.6",
+          "contextWindow": 1000000,
+          "id": "qoder/fast",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 200000,
-          "name": "Kimi K2.6 · Command Code Plan",
-          "reasoning": true
-        },
-        {
-          "contextWindow": 256000,
-          "id": "commandcode-plan/moonshotai/Kimi-K2.5",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 200000,
-          "name": "Kimi K2.5 · Command Code Plan",
+          "maxTokens": 131072,
+          "name": "Fast · Qoder",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -1791,178 +950,161 @@
           }
         },
         {
-          "contextWindow": 1048576,
-          "cost": {
-            "cacheRead": 0.03,
-            "cacheWrite": 0,
-            "input": 0.15,
-            "output": 0.5
-          },
-          "id": "commandcode-plan/z-ai/glm-5.3-flash",
+          "id": "qoder/performance",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 131072,
-          "name": "GLM-5.3 Flash · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
+          "name": "performance · Qoder",
+          "reasoning": false
         },
         {
           "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.075,
-            "cacheWrite": 0,
-            "input": 0.37,
-            "output": 1.25
-          },
-          "id": "commandcode-plan/z-ai/glm-5.3-flashx",
+          "id": "qoder/efficient",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 131072,
-          "name": "GLM-5.3 FlashX · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "commandcode-plan/zai-org/GLM-5.3",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.3 · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "commandcode-plan/zai-org/GLM-5.2",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.2 · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": null,
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 1000000,
-          "id": "commandcode-plan/zai-org/GLM-5.2-Fast",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.2 Fast · Command Code Plan",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": null,
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": "none",
-            "xhigh": null
-          }
-        },
-        {
-          "contextWindow": 200000,
-          "cost": {
-            "cacheRead": 0.26,
-            "cacheWrite": 0,
-            "input": 1.4,
-            "output": 4.4
-          },
-          "id": "commandcode-plan/zai-org/GLM-5.1",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 131072,
-          "name": "GLM-5.1 · Command Code Plan",
+          "maxTokens": 65536,
+          "name": "Auto Efficient · Qoder",
           "reasoning": true
         },
         {
-          "contextWindow": 200000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 0,
-            "input": 1,
-            "output": 3.2
-          },
-          "id": "commandcode-plan/zai-org/GLM-5",
+          "id": "qoder/smodel",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 131072,
-          "name": "GLM-5 · Command Code Plan",
-          "reasoning": true
+          "name": "smodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/cmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "cmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/qmodel_38max",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "qmodel_38max · Qoder",
+          "reasoning": false
         },
         {
           "contextWindow": 1000000,
-          "cost": {
-            "cacheRead": 0.06,
-            "cacheWrite": 0,
-            "input": 0.3,
-            "output": 1.2
-          },
-          "id": "commandcode-plan/MiniMaxAI/MiniMax-M3",
+          "id": "qoder/qfmodel",
           "input": [
             "text",
             "image"
           ],
-          "maxTokens": 200000,
-          "name": "MiniMax M3 · Command Code Plan",
+          "name": "Qwen3.8-Flash · Qoder",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": null,
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": null,
+            "off": null,
+            "xhigh": "xhigh"
+          }
+        },
+        {
+          "id": "qoder/qmodel_latest",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "qmodel_latest · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/qmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "qmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/kmodel_latest",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "kmodel_latest · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/kmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "kmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/gmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "gmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/gfmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "gfmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/dmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "dmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/dfmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "dfmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "id": "qoder/mmodel",
+          "input": [
+            "text",
+            "image"
+          ],
+          "name": "mmodel · Qoder",
+          "reasoning": false
+        },
+        {
+          "contextWindow": 1000000,
+          "id": "qoder-cn/efficient",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 65536,
+          "name": "Auto Efficient · Qoder CN",
           "reasoning": true
         }
       ],
