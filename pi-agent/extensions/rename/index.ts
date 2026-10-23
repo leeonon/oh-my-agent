@@ -33,6 +33,20 @@ export default function (pi: ExtensionAPI) {
 		ctx.ui.setTitle(`${isRunning ? "·" : "✳"} ${name} - ${path.basename(ctx.cwd)}`);
 	}
 
+	pi.registerCommand("rename", {
+		description: "重命名当前会话（无参数时弹输入框，也可 /rename 新名称 直接改名）",
+		handler: async (args: string, ctx: ExtensionContext) => {
+			const current = pi.getSessionName();
+			let raw = args.trim();
+			if (!raw) raw = (await ctx.ui.input("重命名会话", current ?? "输入新会话名称")) ?? "";
+			const name = raw.trim();
+			if (!name) return; // 取消或空输入 → 不改
+			pi.setSessionName(name);
+			syncTitle(ctx);
+			ctx.ui.notify(`会话已重命名：${name}`);
+		},
+	});
+
 	pi.on("agent_start", async (_event, ctx) => {
 		isRunning = true;
 		syncTitle(ctx);
