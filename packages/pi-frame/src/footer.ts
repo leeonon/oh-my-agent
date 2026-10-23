@@ -214,14 +214,22 @@ export const sessionTotals = {
 	wallMs: 0,
 	modelMs: 0,
 	toolMs: 0,
+	streamMs: 0,
 	ttftSumMs: 0,
 	ttftSamples: 0,
 	outputTokens: 0,
 };
 
+export function resetSessionTotals(): void {
+	Object.assign(sessionTotals, {
+		turns: 0, steps: 0, wallMs: 0, modelMs: 0, toolMs: 0,
+		streamMs: 0, ttftSumMs: 0, ttftSamples: 0, outputTokens: 0,
+	});
+}
+
 export function fmtTurnDur(ms: number): string {
-	const whole = Math.round(ms / 1000);
-	if (whole < 60) return `${Math.max(1, Math.round(ms / 100) / 10)}s`;
+	const whole = Math.max(1, Math.round(ms / 1000));
+	if (whole < 60) return `${whole}s`;
 	const m = Math.floor(whole / 60);
 	if (m < 60) return `${m}m ${String(whole % 60).padStart(2, "0")}s`;
 	const h = Math.floor(m / 60);
@@ -242,14 +250,16 @@ export function statsPanel(fg: FgFn): string {
 
 	const t = turnLive;
 	const running = t.startedAt !== undefined && t.settledMs === undefined;
-	const wall = running && t.startedAt !== undefined ? Date.now() - t.startedAt : t.settledMs;
+	const wall = running && t.startedAt !== undefined ? Math.max(0, Date.now() - t.startedAt) : t.settledMs;
 	if (wall !== undefined) {
+		const otherMs = Math.max(0, wall - t.modelMs - t.toolMs);
 		const parts = [
 			`${val(fmtTurnDur(wall))}${t.aborted ? tint(fg, "error", " ✘") : ""}`,
 			`${dim("模型 ")}${val(fmtTurnDur(t.modelMs))}`,
-			`${dim("工具 ")}${val(fmtTurnDur(t.toolMs))}`,
+			`${dim("工具(累计) ")}${val(fmtTurnDur(t.toolMs))}`,
 			`${val(String(t.steps))}${dim(" 步")}`,
 		];
+		if (otherMs > 1000) parts.push(`${dim("其他 ")}${val(fmtTurnDur(otherMs))}`);
 		if (t.ttftLastMs !== undefined) parts.push(`${dim("TTFT ")}${val((t.ttftLastMs / 1000).toFixed(1))}s`);
 		const tps = liveTps(t);
 		if (tps !== undefined) parts.push(`${val(String(Math.round(tps)))} ${dim("tok/s")}`);
@@ -260,17 +270,16 @@ export function statsPanel(fg: FgFn): string {
 
 	const s = sessionTotals;
 	if (s.turns > 0) {
-		const streamMs = Math.max(0, s.modelMs - s.ttftSumMs);
 		const parts = [
 			`${val(String(s.turns))}${dim(" 轮 ")}${val(String(s.steps))}${dim(" 步")}`,
 			`${dim("总耗时 ")}${val(fmtTurnDur(s.wallMs))}`,
 			`${dim("模型 ")}${val(fmtTurnDur(s.modelMs))}`,
-			`${dim("工具 ")}${val(fmtTurnDur(s.toolMs))}`,
+			`${dim("工具(累计) ")}${val(fmtTurnDur(s.toolMs))}`,
 		];
 		if (s.ttftSamples > 0) {
 			parts.push(`${dim("TTFT 均值 ")}${val((s.ttftSumMs / s.ttftSamples / 1000).toFixed(1))}s`);
 		}
-		if (streamMs > 0) parts.push(`${val(String(Math.round((s.outputTokens / streamMs) * 1000)))} ${dim("tok/s")}`);
+		if (s.streamMs > 0) parts.push(`${val(String(Math.round((s.outputTokens / s.streamMs) * 1000)))} ${dim("tok/s")}`);
 		parts.push(`${dim("累计输出 ")}${val(String(Math.round(s.outputTokens)))} ${dim("tok")}`);
 		rows.push(`${dim("会话")}: ${parts.join(dim(" · "))}`);
 	}
@@ -288,8 +297,8 @@ function segmentText(id: SegmentId, ctx: FooterCtx, footerData: FooterData, fg: 
 		}
 		case "turn": {
 			const t = turnLive;
-			const running = t.startedAt !== undefined;
-			const wall = running && t.startedAt !== undefined ? Date.now() - t.startedAt : t.settledMs;
+			const running = t.startedAt !== undefined && t.settledMs === undefined;
+			const wall = running && t.startedAt !== undefined ? Math.max(0, Date.now() - t.startedAt) : t.settledMs;
 			if (wall === undefined) return null;
 			const sep = tint(fg, "dim", " · ");
 			const parts = [
@@ -297,6 +306,8 @@ function segmentText(id: SegmentId, ctx: FooterCtx, footerData: FooterData, fg: 
 			];
 			if (t.ttftLastMs !== undefined) {
 				parts.push(tint(fg, "dim", `TTFT ${(t.ttftLastMs / 1000).toFixed(1)}s`));
+			} else if (running) {
+				parts.push(tint(fg, "dim", "TTFT …"));
 			}
 			const tps = liveTps(t);
 			if (tps !== undefined) parts.push(tint(fg, "dim", `${Math.round(tps)} tok/s`));

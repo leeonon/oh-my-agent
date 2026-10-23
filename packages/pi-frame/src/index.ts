@@ -12,6 +12,7 @@ import {
 	renderFooterRows,
 	turnLive,
 	sessionTotals,
+	resetSessionTotals,
 	freshTurn,
 	fmtTurnDur,
 	statsPanel,
@@ -155,6 +156,17 @@ export default function (pi: ExtensionAPI) {
 	pi.on("session_start", (_event, ctx) => {
 		if (config.editor.frame) installEditor(ctx, config);
 		if (config.footer.enabled) installFooter(ctx, config);
+		// Module-level singletons must not leak across /new or session switches.
+		resetSessionTotals();
+		Object.assign(turnLive, freshTurn());
+		turnStartedAt = 0;
+	});
+
+	// _prepareRun failures never emit agent_settled: without this the tick
+	// interval would leak and the footer would stay "running" forever.
+	pi.on("session_shutdown", () => {
+		stopTick();
+		turnStartedAt = 0;
 	});
 
 	// ⏱ current-turn stats. ONE turn = before_agent_start → agent_settled
@@ -162,7 +174,7 @@ export default function (pi: ExtensionAPI) {
 	// reset the clock on every tool call). Tick 250ms while running.
 	let tick: ReturnType<typeof setInterval> | undefined;
 	let turnStartedAt = 0;
-	let assistantStartedAt = 0;
+	let stepStartedAt = 0;
 	let firstDeltaAt = 0;
 
 	const stopTick = () => {
@@ -175,25 +187,35 @@ export default function (pi: ExtensionAPI) {
 	pi.on("before_agent_start", () => {
 		turnStartedAt = Date.now();
 		Object.assign(turnLive, freshTurn(), { startedAt: turnStartedAt });
-		assistantStartedAt = 0;
+		stepStartedAt = 0;
 		firstDeltaAt = 0;
 		stopTick();
-		tick = setInterval(() => footerTui?.requestRender(), 250);
+		// 1s tick: the footer row is redrawn as a whole on every change, so a
+		// faster tick reads as flicker. Whole-second display needs no more.
+		tick = setInterval(() => footerTui?.requestRender(), 1000);
 	});
 
-	pi.on("message_start", (event) => {
-		const message = event.message as { role?: string };
-		if (message.role !== "assistant") return;
-		assistantStartedAt = Date.now();
+	// TTFT / model-time origin = turn_start (fired per LLM request, BEFORE the
+	// request goes out). message_start is not a TTFT origin: pi-ai emits the
+	// stream "start" as soon as response headers arrive, near-simultaneous
+	// with the first delta on fast providers. turn_start also includes local
+	// per-step prep (context assembly) — reported TTFT is user-perceived.
+	pi.on("turn_start", () => {
+		stepStartedAt = Date.now();
 		firstDeltaAt = 0;
+		// Waiting for this step's first token: drop the stale reading so the
+		// footer shows "TTFT …". Semantics = LAST step's TTFT: a step aborted
+		// before its first token leaves no reading (we do NOT backfill the
+		// previous step's value; per-turn averages are unaffected).
+		turnLive.ttftLastMs = undefined;
 	});
 
 	pi.on("message_update", (event) => {
-		if (!assistantStartedAt) return;
+		if (!stepStartedAt) return;
 		const type = String((event.assistantMessageEvent as { type?: string })?.type ?? "");
 		if (type.endsWith("_delta") && !firstDeltaAt) {
 			firstDeltaAt = Date.now();
-			const ttft = firstDeltaAt - assistantStartedAt;
+			const ttft = firstDeltaAt - stepStartedAt;
 			turnLive.ttftLastMs = ttft;
 			turnLive.ttftSumMs += ttft;
 			turnLive.ttftSamples += 1;
@@ -203,18 +225,20 @@ export default function (pi: ExtensionAPI) {
 	pi.on("message_end", (event) => {
 		const message = event.message as { role?: string; usage?: { output?: number } };
 		if (message.role !== "assistant") return;
-		if (assistantStartedAt) {
-			const modelMs = Date.now() - assistantStartedAt;
-			turnLive.modelMs += modelMs;
+		if (stepStartedAt) {
+			turnLive.modelMs += Date.now() - stepStartedAt;
 			if (firstDeltaAt) {
 				turnLive.streamMs += Math.max(0, Date.now() - firstDeltaAt);
 			}
-			assistantStartedAt = 0;
+			stepStartedAt = 0;
 		}
 		turnLive.outputTokens += message.usage?.output ?? 0;
 	});
 
 	pi.on("tool_execution_end", (event) => {
+		// Nested calls (codemode ctx.executeTool) are already included in the
+		// parent tool's durationMs — counting both would inflate toolMs.
+		if (event.parentToolCallId) return;
 		turnLive.toolMs += event.durationMs ?? 0;
 	});
 
@@ -225,10 +249,13 @@ export default function (pi: ExtensionAPI) {
 	pi.on("agent_settled", (event) => {
 		stopTick();
 		if (!turnStartedAt) return;
-		const wallMs = Date.now() - turnStartedAt;
+		const wallMs = Math.max(0, Date.now() - turnStartedAt);
 		turnStartedAt = 0;
 
-		// Freeze the live turn, roll it into session totals.
+		// Freeze the live turn, roll it into session totals. Clearing
+		// startedAt matters: segmentText treats startedAt!==undefined as
+		// "running" and would keep recomputing Date.now()-startedAt forever.
+		turnLive.startedAt = undefined;
 		turnLive.settledMs = wallMs;
 		turnLive.aborted = Boolean((event as { aborted?: boolean }).aborted);
 		const totals = sessionTotals;
@@ -237,6 +264,7 @@ export default function (pi: ExtensionAPI) {
 		totals.wallMs += wallMs;
 		totals.modelMs += turnLive.modelMs;
 		totals.toolMs += turnLive.toolMs;
+		totals.streamMs += turnLive.streamMs;
 		totals.ttftSumMs += turnLive.ttftSumMs;
 		totals.ttftSamples += turnLive.ttftSamples;
 		totals.outputTokens += turnLive.outputTokens;
