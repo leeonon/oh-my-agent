@@ -594,6 +594,16 @@
       "skillFolderHash": "b799ee7c865bec20b580cb1dfe493bcfb1f79e6d",
       "installedAt": "2026-09-13T11:20:22.314Z",
       "updatedAt": "2026-09-13T11:20:22.314Z"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "skillFolderHash": "2a22452297d559ea5ad97c178879d30ee3ec8022",
+      "pluginName": "taste-skill",
+      "installedAt": "2026-10-23T06:22:04.828Z",
+      "updatedAt": "2026-10-23T06:22:04.828Z"
     }
   },
   "dismissed": {
@@ -605,6 +615,7 @@
     "codex",
     "cursor",
     "droid",
+    "fx",
     "gemini-cli",
     "github-copilot",
     "kilo",
